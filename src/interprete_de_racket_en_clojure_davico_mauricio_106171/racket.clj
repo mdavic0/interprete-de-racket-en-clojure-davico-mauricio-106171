@@ -597,7 +597,16 @@
 ; ""
 (defn proteger-bool-en-str
   "Cambia, en una cadena, #t por %t y #f por %f, para poder aplicarle read-string."
-[]
+  [cadena]
+  (if cadena
+    ;-> (threading macro) permite tomar el resultado de una expresión
+    ;y pasarlo como primer argumento a la siguiente expresión
+    (-> cadena
+        (clojure.string/replace "#t" "%t")
+        (clojure.string/replace "#f" "%f")
+    )
+    ""
+  )
 )
 
 ; user=> (restaurar-bool (read-string (proteger-bool-en-str "(and (or #F #f #t #T) #T)")))
