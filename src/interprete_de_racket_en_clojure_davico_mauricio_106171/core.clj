@@ -1,7 +1,7 @@
 (ns interprete-de-racket-en-clojure-davico-mauricio-106171.core
-  (:gen-class))
+  (:gen-class)
+  (:require [interprete-de-racket-en-clojure-davico-mauricio-106171.racket]))
 
 (defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+  [& args] (interprete-de-racket-en-clojure-davico-mauricio-106171.racket/repl)
+)
