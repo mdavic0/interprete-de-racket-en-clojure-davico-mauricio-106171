@@ -56,3 +56,17 @@
     (is (= (buscar 'b '(a nil b nil c nil)) nil))
   )
 )
+
+(deftest test-error?
+  (testing "Lista que empieza con ;ERROR: es un error"
+    (is (= (error? (list (symbol ";ERROR:") 'mal 'hecho)) true))
+  )
+    
+  (testing "Lista que empieza con ;WARNING: es un error"
+    (is (= (error? (list (symbol ";WARNING:") 'mal 'hecho)) true))
+  )
+
+  (testing "Lista que no empieza con ;ERROR: ni ;WARNING: no es un error"
+    (is (= (error? (list 'mal 'hecho)) false))
+  )
+)
