@@ -584,7 +584,13 @@
 (defn buscar
   "Busca una clave en un ambiente (una lista con claves en las posiciones impares [1, 3, 5...] y valores en las pares [2, 4, 6...]
    y devuelve el valor asociado. Devuelve un error :unbound-variable si no la encuentra."
-[]
+	 [clave amb]
+		(if (empty? amb)
+				(generar-mensaje-error :unbound-variable clave)
+				(if (= clave (first amb))
+						(second amb)
+						(buscar clave (drop 2 amb)))
+		)
 )
 
 ; user=> (error? (list (symbol ";ERROR:") 'mal 'hecho))

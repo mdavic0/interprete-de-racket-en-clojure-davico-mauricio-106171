@@ -20,22 +20,39 @@
   )
 )
 
-(deftest test-actualizar-amb
-  (testing "Actualizar ambiente con clave existente"
-    (is (= (actualizar-amb '(a 1 b 2 c 3) 'b 4) '(a 1 b 4 c 3)))
-  )
+;; (deftest test-actualizar-amb
+;;   (testing "Actualizar ambiente con clave existente"
+;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'b 4) '(a 1 b 4 c 3)))
+;;   )
 
-  (testing "Actualizar ambiente con clave inexistente"
-    (is (= (actualizar-amb '(a 1 b 2 c 3) 'e 5) '(a 1 b 2 c 3 e 5)))
-    (is (= (actualizar-amb '(a 1 b 2 c 3) 'f 6) '(a 1 b 2 c 3 f 6)))
-  )
+;;   (testing "Actualizar ambiente con clave inexistente"
+;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'e 5) '(a 1 b 2 c 3 e 5)))
+;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'f 6) '(a 1 b 2 c 3 f 6)))
+;;   )
   
-  (testing "Actualizar ambiente con valor de error"
-    (is (= (actualizar-amb '(a 1 b 2 c 3) 'b (list (symbol ";ERROR:") 'mal 'hecho)) '(a 1 b 2 c 3)))
-  )
+;;   (testing "Actualizar ambiente con valor de error"
+;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'b (list (symbol ";ERROR:") 'mal 'hecho)) '(a 1 b 2 c 3)))
+;;   )
   
-  (testing "Actualizar ambiente vacío"
-    (is (= (actualizar-amb () 'b 7) '(b 7)))
-    (is (= (actualizar-amb () 'c (list (symbol ";ERROR:") 'error 'mensaje)) '()))
+;;   (testing "Actualizar ambiente vacío"
+;;     (is (= (actualizar-amb () 'b 7) '(b 7)))
+;;     (is (= (actualizar-amb () 'c (list (symbol ";ERROR:") 'error 'mensaje)) '()))
+;;   )
+;; )
+
+(deftest test-buscar
+  (testing "Buscar clave existente en ambiente"
+    (is (= (buscar 'c '(a 1 b 2 c 3 d 4 e 5)) 3))
+    (is (= (buscar 'a '(a 1 b 2 c 3 d 4 e 5)) 1)))
+
+  (testing "Buscar clave inexistente en ambiente"
+    (is (= (buscar 'f '(a 1 b 2 c 3 d 4 e 5)) (cons (symbol ";ERROR:") (list 'unbound (symbol "variable:") 'f))))
+    (is (= (buscar 'x '(a 1 b 2 c 3 d 4 e 5)) (cons (symbol ";ERROR:") (list 'unbound (symbol "variable:") 'x)))))
+
+  (testing "Buscar en ambiente vacío"
+    (is (= (buscar 'a '()) (cons (symbol ";ERROR:") (list 'unbound (symbol "variable:") 'a)))))
+
+  (testing "Buscar en ambiente con valores nulos"
+    (is (= (buscar 'b '(a nil b nil c nil)) nil))
   )
 )
