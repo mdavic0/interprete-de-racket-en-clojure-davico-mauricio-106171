@@ -551,7 +551,16 @@
 ; 0
 (defn verificar-parentesis
   "Cuenta los parentesis en una cadena, sumando 1 si `(`, restando 1 si `)`. Si el contador se hace negativo, para y retorna -1."
-[]
+	([cadena] (verificar-parentesis cadena 0))
+	([cadena contador]
+		(cond
+			(empty? cadena) contador
+			(< contador 0) -1
+			(= (first cadena) \() (verificar-parentesis (rest cadena) (inc contador))
+			(= (first cadena) \)) (verificar-parentesis (rest cadena) (dec contador))
+			:else (verificar-parentesis (rest cadena) contador)
+		)
+	)
 )
 
 ; user=> (actualizar-amb '(a 1 b 2 c 3) 'd 4)
