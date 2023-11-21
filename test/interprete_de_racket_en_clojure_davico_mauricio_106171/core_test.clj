@@ -19,3 +19,23 @@
     (is (= (verificar-parentesis "(hola '(mundo) )") 0))
   )
 )
+
+(deftest test-actualizar-amb
+  (testing "Actualizar ambiente con clave existente"
+    (is (= (actualizar-amb '(a 1 b 2 c 3) 'b 4) '(a 1 b 4 c 3)))
+  )
+
+  (testing "Actualizar ambiente con clave inexistente"
+    (is (= (actualizar-amb '(a 1 b 2 c 3) 'e 5) '(a 1 b 2 c 3 e 5)))
+    (is (= (actualizar-amb '(a 1 b 2 c 3) 'f 6) '(a 1 b 2 c 3 f 6)))
+  )
+  
+  (testing "Actualizar ambiente con valor de error"
+    (is (= (actualizar-amb '(a 1 b 2 c 3) 'b (list (symbol ";ERROR:") 'mal 'hecho)) '(a 1 b 2 c 3)))
+  )
+  
+  (testing "Actualizar ambiente vacío"
+    (is (= (actualizar-amb () 'b 7) '(b 7)))
+    (is (= (actualizar-amb () 'c (list (symbol ";ERROR:") 'error 'mensaje)) '()))
+  )
+)
