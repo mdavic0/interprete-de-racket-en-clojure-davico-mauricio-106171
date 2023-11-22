@@ -98,3 +98,32 @@
     (is (= (fnc-equal? '(1 1 2 1)) (symbol "#f")))
   )
 )
+
+; user=> (fnc-sumar ())
+; 0
+; user=> (fnc-sumar '(3))
+; 3
+; user=> (fnc-sumar '(3 4))
+; 7
+; user=> (fnc-sumar '(3 4 5))
+; 12
+; user=> (fnc-sumar '(3 4 5 6))
+; 18
+; user=> (fnc-sumar '(A 4 5 6))
+; (;ERROR: +: Wrong type in arg1 A)
+; user=> (fnc-sumar '(3 A 5 6))
+; (;ERROR: +: Wrong type in arg2 A)
+; user=> (fnc-sumar '(3 4 A 6))
+; (;ERROR: +: Wrong type in arg2 A)
+(deftest test-fnc-sumar
+  (testing "fnc-sumar: Suma los elementos de la lista"
+    (is (= (fnc-sumar '()) 0))
+    (is (= (fnc-sumar '(3)) 3))
+    (is (= (fnc-sumar '(3 4)) 7))
+    (is (= (fnc-sumar '(3 4 5)) 12))
+    (is (= (fnc-sumar '(3 4 5 6)) 18))
+    (is (= (fnc-sumar '(A 4 5 6)) (cons (symbol ";ERROR:") (list (symbol "+:") 'Wrong 'type 'in 'arg1 'A))))
+    (is (= (fnc-sumar '(3 A 5 6)) (cons (symbol ";ERROR:") (list (symbol "+:") 'Wrong 'type 'in 'arg2 'A))))
+    (is (= (fnc-sumar '(3 4 A 6)) (cons (symbol ";ERROR:") (list (symbol "+:") 'Wrong 'type 'in 'arg2 'A))))
+  )
+)

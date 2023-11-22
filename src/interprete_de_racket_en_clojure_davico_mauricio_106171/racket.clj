@@ -726,7 +726,13 @@
 ; (;ERROR: +: Wrong type in arg2 A)
 (defn fnc-sumar
   "Suma los elementos de una lista."
-[]
+  [lista]
+  (cond
+    (empty? lista) 0
+    (not (number? (first lista))) (generar-mensaje-error :wrong-type-arg1 '+ (first lista))
+    (not (every? number? lista)) (generar-mensaje-error :wrong-type-arg2 '+ (first (drop-while number? lista)))
+    :else (apply + lista)
+  )
 )
 
 ; user=> (fnc-restar ())
