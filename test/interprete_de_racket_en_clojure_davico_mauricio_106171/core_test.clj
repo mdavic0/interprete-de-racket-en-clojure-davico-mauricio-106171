@@ -2,6 +2,12 @@
   (:require [clojure.test :refer :all]
             [interprete-de-racket-en-clojure-davico-mauricio-106171.racket :refer :all]))
 
+; user=> (proteger-bool-en-str "(or #f #t)")
+; "(or %f %t)"
+; user=> (proteger-bool-en-str "(and (or #f #t) #t)")
+; "(and (or %f %t) %t)"
+; user=> (proteger-bool-en-str "")
+; ""
 (deftest test-proteger-bool-en-str
   (testing "Proteger bool en str: Cambia, en una cadena, #t por %t y #f por %f"
     (is (= (proteger-bool-en-str "(or #f #t)") "(or %f %t)"))
@@ -10,6 +16,27 @@
   )
 )
 
+; user=> (restaurar-bool (read-string (proteger-bool-en-str "(and (or #F #f #t #T) #T)")))
+; (and (or #F #f #t #T) #T)
+; user=> (restaurar-bool (read-string "(and (or %F %f %t %T) %T)") )
+; (and (or #F #f #t #T) #T)
+(deftest test-restaurar-bool
+  (testing "Restaurar bool cambia, en un codigo leido con read-string, %t por #t y %f por #f."
+    (is (= (restaurar-bool (read-string (proteger-bool-en-str "(and (or #F #f #t #T) #T)"))) "(and (or #F #f #t #T) #T)"))
+    (is (= (restaurar-bool (read-string "(and (or %F %f %t %T) %T)") ) "(and (or #F #f #t #T) #T)"))
+  )
+)
+
+; user=> (verificar-parentesis "(hola 'mundo")
+; 1
+; user=> (verificar-parentesis "(hola '(mundo)))")
+; -1
+; user=> (verificar-parentesis "(hola '(mundo) () 6) 7)")
+; -1
+; user=> (verificar-parentesis "(hola '(mundo) () 6) 7) 9)")
+; -1
+; user=> (verificar-parentesis "(hola '(mundo) )")
+; 0
 (deftest test-verificar-parentesis
   (testing "Verificar paréntesis"
     (is (= (verificar-parentesis "(hola 'mundo") 1))
@@ -20,26 +47,10 @@
   )
 )
 
-;; (deftest test-actualizar-amb
-;;   (testing "Actualizar ambiente con clave existente"
-;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'b 4) '(a 1 b 4 c 3)))
-;;   )
-
-;;   (testing "Actualizar ambiente con clave inexistente"
-;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'e 5) '(a 1 b 2 c 3 e 5)))
-;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'f 6) '(a 1 b 2 c 3 f 6)))
-;;   )
-  
-;;   (testing "Actualizar ambiente con valor de error"
-;;     (is (= (actualizar-amb '(a 1 b 2 c 3) 'b (list (symbol ";ERROR:") 'mal 'hecho)) '(a 1 b 2 c 3)))
-;;   )
-  
-;;   (testing "Actualizar ambiente vacío"
-;;     (is (= (actualizar-amb () 'b 7) '(b 7)))
-;;     (is (= (actualizar-amb () 'c (list (symbol ";ERROR:") 'error 'mensaje)) '()))
-;;   )
-;; )
-
+; user=> (buscar 'c '(a 1 b 2 c 3 d 4 e 5))
+; 3
+; user=> (buscar 'f '(a 1 b 2 c 3 d 4 e 5))
+; (;ERROR: unbound variable: f)
 (deftest test-buscar
   (testing "Buscar clave existente en ambiente"
     (is (= (buscar 'c '(a 1 b 2 c 3 d 4 e 5)) 3))
@@ -57,6 +68,12 @@
   )
 )
 
+; user=> (error? (list (symbol ";ERROR:") 'mal 'hecho))
+; true
+; user=> (error? (list 'mal 'hecho))
+; false
+; user=> (error? (list (symbol ";WARNING:") 'mal 'hecho))
+; true
 (deftest test-error?
   (testing "Lista que empieza con ;ERROR: es un error"
     (is (= (error? (list (symbol ";ERROR:") 'mal 'hecho)) true))
@@ -71,13 +88,12 @@
   )
 )
 
-(deftest test-restaurar-bool
-  (testing "Restaurar bool cambia, en un codigo leido con read-string, %t por #t y %f por #f."
-    (is (= (restaurar-bool (read-string (proteger-bool-en-str "(and (or #F #f #t #T) #T)"))) "(and (or #F #f #t #T) #T)"))
-    (is (= (restaurar-bool (read-string "(and (or %F %f %t %T) %T)") ) "(and (or #F #f #t #T) #T)"))
-  )
-)
-
+; user=> (fnc-append '( (1 2) (3) (4 5) (6 7)))
+; (1 2 3 4 5 6 7)
+; user=> (fnc-append '( (1 2) 3 (4 5) (6 7)))
+; (;ERROR: append: Wrong type in arg 3)
+; user=> (fnc-append '( (1 2) A (4 5) (6 7)))
+; (;ERROR: append: Wrong type in arg A)
 (deftest test-fnc-append
   (testing "fnc-append: Concatena listas"
     (is (= (fnc-append '( (1 2) (3) (4 5) (6 7))) '(1 2 3 4 5 6 7)))
@@ -86,6 +102,22 @@
   )
 ) 
 
+; user=> (fnc-equal? ())
+; #t
+; user=> (fnc-equal? '(A))
+; #t
+; user=> (fnc-equal? '(A a))
+; #t
+; user=> (fnc-equal? '(A a A))
+; #t
+; user=> (fnc-equal? '(A a A a))
+; #t
+; user=> (fnc-equal? '(A a A B))
+; #f
+; user=> (fnc-equal? '(1 1 1 1))
+; #t
+; user=> (fnc-equal? '(1 1 2 1))
+; #f
 (deftest test-fnc-equal?
   (testing "fnc-equal?: Compara elementos en la lista (case-sensitive)"
     (is (= (fnc-equal? '()) (symbol "#t")))
