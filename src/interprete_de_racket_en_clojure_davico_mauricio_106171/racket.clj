@@ -683,7 +683,14 @@
 ; #f
 (defn fnc-equal?
   "Compara elementos. Si son iguales, devuelve #t. Si no, #f."
-[]
+  [lista]
+  (cond 
+    (empty? lista) (symbol "#t")
+    (empty? (rest lista)) (symbol "#t")
+    (not (= (clojure.string/lower-case (str (first lista))) 
+            (clojure.string/lower-case (str (second lista))))) (symbol "#f")
+    :else (fnc-equal? (rest lista))
+  )
 )
 
 ; user=> (fnc-read ())

@@ -85,3 +85,16 @@
     (is (= (fnc-append '( (1 2) A (4 5) (6 7))) (cons (symbol ";ERROR:") (list (symbol "append:") 'Wrong 'type 'in 'arg 'A))))
   )
 ) 
+
+(deftest test-fnc-equal?
+  (testing "fnc-equal?: Compara elementos en la lista (case-sensitive)"
+    (is (= (fnc-equal? '()) (symbol "#t")))
+    (is (= (fnc-equal? '(A)) (symbol "#t")))
+    (is (= (fnc-equal? '(A a)) (symbol "#t")))
+    (is (= (fnc-equal? '(A a A)) (symbol "#t")))
+    (is (= (fnc-equal? '(A a A a)) (symbol "#t")))
+    (is (= (fnc-equal? '(A a A B)) (symbol "#f")))
+    (is (= (fnc-equal? '(1 1 1 1)) (symbol "#t")))
+    (is (= (fnc-equal? '(1 1 2 1)) (symbol "#f")))
+  )
+)
