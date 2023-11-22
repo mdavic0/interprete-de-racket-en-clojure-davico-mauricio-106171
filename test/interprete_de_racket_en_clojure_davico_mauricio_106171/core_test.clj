@@ -188,3 +188,38 @@
     (is (= (fnc-restar '(3 4 A 6)) (cons (symbol ";ERROR:") (list (symbol "-:") 'Wrong 'type 'in 'arg2 'A))))
   )
 )
+
+; user=> (fnc-menor ())
+; #t
+; user=> (fnc-menor '(1))
+; #t
+; user=> (fnc-menor '(1 2))
+; #t
+; user=> (fnc-menor '(1 2 3))
+; #t
+; user=> (fnc-menor '(1 2 3 4))
+; #t
+; user=> (fnc-menor '(1 2 2 4))
+; #f
+; user=> (fnc-menor '(1 2 1 4))
+; #f
+; user=> (fnc-menor '(A 1 2 4))
+; (;ERROR: <: Wrong type in arg1 A)
+; user=> (fnc-menor '(1 A 1 4))
+; (;ERROR: <: Wrong type in arg2 A)
+; user=> (fnc-menor '(1 2 A 4))
+; (;ERROR: <: Wrong type in arg2 A)
+(deftest test-fnc-menor
+  (testing "fnc-menor: Devuelve #t si los numeros de una lista estan en orden estrictamente creciente; si no, #f."
+    (is (= (fnc-menor ()) (symbol "#t")))
+    (is (= (fnc-menor '(1)) (symbol "#t")))
+    (is (= (fnc-menor '(1 2)) (symbol "#t")))
+    (is (= (fnc-menor '(1 2 3)) (symbol "#t")))
+    (is (= (fnc-menor '(1 2 3 4)) (symbol "#t")))
+    (is (= (fnc-menor '(1 2 2 4)) (symbol "#f")))
+    (is (= (fnc-menor '(1 2 1 4)) (symbol "#f")))
+    (is (= (fnc-menor '(A 1 2 4)) (cons (symbol ";ERROR:") (list (symbol "<:") 'Wrong 'type 'in 'arg1 'A))))
+    (is (= (fnc-menor '(1 A 1 4)) (cons (symbol ";ERROR:") (list (symbol "<:") 'Wrong 'type 'in 'arg2 'A))))
+    (is (= (fnc-menor '(1 2 A 4)) (cons (symbol ";ERROR:") (list (symbol "<:") 'Wrong 'type 'in 'arg2 'A))))
+  )
+)

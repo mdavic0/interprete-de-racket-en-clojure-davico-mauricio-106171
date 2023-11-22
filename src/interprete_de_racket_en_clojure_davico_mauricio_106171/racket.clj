@@ -784,7 +784,16 @@
 ; (;ERROR: <: Wrong type in arg2 A)
 (defn fnc-menor
   "Devuelve #t si los numeros de una lista estan en orden estrictamente creciente; si no, #f."
-[]
+  [lista]
+  (cond
+    (empty? lista) (symbol "#t")
+    (not (number? (first lista))) (generar-mensaje-error :wrong-type-arg1 '< (first lista))
+    (not (every? number? lista)) (generar-mensaje-error :wrong-type-arg2 '< (first (drop-while number? lista)))
+    :else (cond
+            (apply < lista) (symbol "#t")
+            :else (symbol "#f")
+          )
+  )
 )
 
 ; user=> (fnc-mayor ())
