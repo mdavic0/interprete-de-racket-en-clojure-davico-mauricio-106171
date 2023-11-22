@@ -657,7 +657,12 @@
 ; (;ERROR: append: Wrong type in arg A)
 (defn fnc-append
   "Devuelve el resultado de fusionar listas."
-[]
+  [lista]
+  (cond
+    (empty? lista) ()
+    (not (every? seq? lista)) (generar-mensaje-error :wrong-type-arg 'append (first (drop-while seq? lista)))
+    :else (apply concat lista)
+  )
 )
 
 ; user=> (fnc-equal? ())
