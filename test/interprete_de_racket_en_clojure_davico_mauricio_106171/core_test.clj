@@ -223,3 +223,38 @@
     (is (= (fnc-menor '(1 2 A 4)) (cons (symbol ";ERROR:") (list (symbol "<:") 'Wrong 'type 'in 'arg2 'A))))
   )
 )
+
+; user=> (fnc-mayor ())
+; #t
+; user=> (fnc-mayor '(1))
+; #t
+; user=> (fnc-mayor '(2 1))
+; #t
+; user=> (fnc-mayor '(3 2 1))
+; #t
+; user=> (fnc-mayor '(4 3 2 1))
+; #t
+; user=> (fnc-mayor '(4 2 2 1))
+; #f
+; user=> (fnc-mayor '(4 2 1 4))
+; #f
+; user=> (fnc-mayor '(A 3 2 1))
+; (;ERROR: >: Wrong type in arg1 A)
+; user=> (fnc-mayor '(3 A 2 1))
+; (;ERROR: >: Wrong type in arg2 A)
+; user=> (fnc-mayor '(3 2 A 1))
+; (;ERROR: >: Wrong type in arg2 A)
+(deftest test-fnc-mayor
+  (testing "fnc-mayor: Devuelve #t si los numeros de una lista estan en orden estrictamente decreciente; si no, #f."
+    (is (= (fnc-mayor ()) (symbol "#t")))
+    (is (= (fnc-mayor '(1)) (symbol "#t")))
+    (is (= (fnc-mayor '(2 1)) (symbol "#t")))
+    (is (= (fnc-mayor '(3 2 1)) (symbol "#t")))
+    (is (= (fnc-mayor '(4 3 2 1)) (symbol "#t")))
+    (is (= (fnc-mayor '(4 2 2 1)) (symbol "#f")))
+    (is (= (fnc-mayor '(4 2 1 4)) (symbol "#f")))
+    (is (= (fnc-mayor '(A 3 2 1)) (cons (symbol ";ERROR:") (list (symbol ">:") 'Wrong 'type 'in 'arg1 'A))))
+    (is (= (fnc-mayor '(3 A 2 1)) (cons (symbol ";ERROR:") (list (symbol ">:") 'Wrong 'type 'in 'arg2 'A))))
+    (is (= (fnc-mayor '(3 2 A 1)) (cons (symbol ";ERROR:") (list (symbol ">:") 'Wrong 'type 'in 'arg2 'A))))
+  )
+)
