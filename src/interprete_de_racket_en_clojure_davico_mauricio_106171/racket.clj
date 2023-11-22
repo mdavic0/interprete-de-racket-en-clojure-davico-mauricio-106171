@@ -852,7 +852,16 @@
 ; (;ERROR: >=: Wrong type in arg2 A)
 (defn fnc-mayor-o-igual
   "Devuelve #t si los numeros de una lista estan en orden decreciente; si no, #f."
-[]
+  [lista]
+  (cond
+    (empty? lista) (symbol "#t")
+    (not (number? (first lista))) (generar-mensaje-error :wrong-type-arg1 '>= (first lista))
+    (not (every? number? lista)) (generar-mensaje-error :wrong-type-arg2 '>= (first (drop-while number? lista)))
+    :else (cond
+            (apply >= lista) (symbol "#t")
+            :else (symbol "#f")
+          )
+  )
 )
 
 ; user=> (evaluar-escalar 32 '(x 6 y 11 z "hola"))

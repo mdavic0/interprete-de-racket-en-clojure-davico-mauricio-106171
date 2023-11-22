@@ -258,3 +258,38 @@
     (is (= (fnc-mayor '(3 2 A 1)) (cons (symbol ";ERROR:") (list (symbol ">:") 'Wrong 'type 'in 'arg2 'A))))
   )
 )
+
+; user=> (fnc-mayor-o-igual ())
+; #t
+; user=> (fnc-mayor-o-igual '(1))
+; #t
+; user=> (fnc-mayor-o-igual '(2 1))
+; #t
+; user=> (fnc-mayor-o-igual '(3 2 1))
+; #t
+; user=> (fnc-mayor-o-igual '(4 3 2 1))
+; #t
+; user=> (fnc-mayor-o-igual '(4 2 2 1))
+; #t
+; user=> (fnc-mayor-o-igual '(4 2 1 4))
+; #f
+; user=> (fnc-mayor-o-igual '(A 3 2 1))
+; (;ERROR: >=: Wrong type in arg1 A)
+; user=> (fnc-mayor-o-igual '(3 A 2 1))
+; (;ERROR: >=: Wrong type in arg2 A)
+; user=> (fnc-mayor-o-igual '(3 2 A 1))
+; (;ERROR: >=: Wrong type in arg2 A)
+(deftest test-fnc-mayor-o-igual
+  (testing "fnc-mayor-o-igual: Devuelve #t si los numeros de una lista estan en orden decreciente; si no, #f."
+    (is (= (fnc-mayor-o-igual ()) (symbol "#t")))
+    (is (= (fnc-mayor-o-igual '(1)) (symbol "#t")))
+    (is (= (fnc-mayor-o-igual '(2 1)) (symbol "#t")))
+    (is (= (fnc-mayor-o-igual '(3 2 1)) (symbol "#t")))
+    (is (= (fnc-mayor-o-igual '(4 3 2 1)) (symbol "#t")))
+    (is (= (fnc-mayor-o-igual '(4 2 2 1)) (symbol "#t")))
+    (is (= (fnc-mayor-o-igual '(4 2 1 4)) (symbol "#f")))
+    (is (= (fnc-mayor-o-igual '(A 3 2 1)) (cons (symbol ";ERROR:") (list (symbol ">=:") 'Wrong 'type 'in 'arg1 'A))))
+    (is (= (fnc-mayor-o-igual '(3 A 2 1)) (cons (symbol ";ERROR:") (list (symbol ">=:") 'Wrong 'type 'in 'arg2 'A))))
+    (is (= (fnc-mayor-o-igual '(3 2 A 1)) (cons (symbol ";ERROR:") (list (symbol ">=:") 'Wrong 'type 'in 'arg2 'A))))
+  )
+)
