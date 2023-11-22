@@ -127,3 +127,32 @@
     (is (= (fnc-sumar '(3 4 A 6)) (cons (symbol ";ERROR:") (list (symbol "+:") 'Wrong 'type 'in 'arg2 'A))))
   )
 )
+
+; user=> (fnc-restar ())
+; (;ERROR: -: Wrong number of args given)
+; user=> (fnc-restar '(3))
+; -3
+; user=> (fnc-restar '(3 4))
+; -1
+; user=> (fnc-restar '(3 4 5))
+; -6
+; user=> (fnc-restar '(3 4 5 6))
+; -12
+; user=> (fnc-restar '(A 4 5 6))
+; (;ERROR: -: Wrong type in arg1 A)
+; user=> (fnc-restar '(3 A 5 6))
+; (;ERROR: -: Wrong type in arg2 A)
+; user=> (fnc-restar '(3 4 A 6))
+; (;ERROR: -: Wrong type in arg2 A)
+(deftest test-fnc-restar
+  (testing "fnc-restar: Resta los elementos de una lista"
+    (is (= (fnc-restar '()) (cons (symbol ";ERROR:") (list (symbol "-:") 'Wrong 'number 'of 'args 'given))))
+    (is (= (fnc-restar '(3)) -3))
+    (is (= (fnc-restar '(3 4)) -1))
+    (is (= (fnc-restar '(3 4 5)) -6))
+    (is (= (fnc-restar '(3 4 5 6)) -12))
+    (is (= (fnc-restar '(A 4 5 6)) (cons (symbol ";ERROR:") (list (symbol "-:") 'Wrong 'type 'in 'arg1 'A))))
+    (is (= (fnc-restar '(3 A 5 6)) (cons (symbol ";ERROR:") (list (symbol "-:") 'Wrong 'type 'in 'arg2 'A))))
+    (is (= (fnc-restar '(3 4 A 6)) (cons (symbol ";ERROR:") (list (symbol "-:") 'Wrong 'type 'in 'arg2 'A))))
+  )
+)
