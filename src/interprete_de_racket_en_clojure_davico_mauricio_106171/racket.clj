@@ -621,7 +621,9 @@
     ; y pasarlo como primer argumento a la siguiente expresión
     (-> cadena
         (clojure.string/replace "#t" "%t")
+        (clojure.string/replace "#T" "%T")
         (clojure.string/replace "#f" "%f")
+        (clojure.string/replace "#F" "%F")
     )
     ""
   )
@@ -633,7 +635,18 @@
 ; (and (or #F #f #t #T) #T)
 (defn restaurar-bool
   "Cambia, en un codigo leido con read-string, %t por #t y %f por #f."
-[]
+  [cadena]
+  (if cadena
+    ; -> (threading macro) permite tomar el resultado de una expresión
+    ; y pasarlo como primer argumento a la siguiente expresión
+    (-> cadena
+        (clojure.string/replace "%t" "#t")
+        (clojure.string/replace "%T" "#T")
+        (clojure.string/replace "%f" "#f")
+        (clojure.string/replace "%F" "#F")
+    )
+    ""
+  )
 )
 
 ; user=> (fnc-append '( (1 2) (3) (4 5) (6 7)))
