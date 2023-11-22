@@ -293,3 +293,24 @@
     (is (= (fnc-mayor-o-igual '(3 2 A 1)) (cons (symbol ";ERROR:") (list (symbol ">=:") 'Wrong 'type 'in 'arg2 'A))))
   )
 )
+
+; user=> (evaluar-escalar 32 '(x 6 y 11 z "hola"))
+; (32 (x 6 y 11 z "hola"))
+; user=> (evaluar-escalar "chau" '(x 6 y 11 z "hola"))
+; ("chau" (x 6 y 11 z "hola"))
+; user=> (evaluar-escalar 'y '(x 6 y 11 z "hola"))
+; (11 (x 6 y 11 z "hola"))
+; user=> (evaluar-escalar 'z '(x 6 y 11 z "hola"))
+; ("hola" (x 6 y 11 z "hola"))
+; user=> (evaluar-escalar 'n '(x 6 y 11 z "hola"))
+; ((;ERROR: unbound variable: n) (x 6 y 11 z "hola"))
+
+(deftest test-evaluar-escalar
+  (testing "evaluar-escalar: Evalua un escalar en un ambiente"
+    (is (= (evaluar-escalar 32 '(x 6 y 11 z "hola")) '(32 (x 6 y 11 z "hola"))))
+    (is (= (evaluar-escalar "chau" '(x 6 y 11 z "hola")) '("chau" (x 6 y 11 z "hola"))))
+    (is (= (evaluar-escalar 'y '(x 6 y 11 z "hola")) '(11 (x 6 y 11 z "hola"))))
+    (is (= (evaluar-escalar 'z '(x 6 y 11 z "hola")) '("hola" (x 6 y 11 z "hola"))))
+    (is (= (evaluar-escalar 'n '(x 6 y 11 z "hola")) (list (cons (symbol ";ERROR:") (list 'unbound (symbol "variable:") 'n)) '(x 6 y 11 z "hola"))))
+  )
+)
