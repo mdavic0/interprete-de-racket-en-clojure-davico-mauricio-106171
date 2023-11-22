@@ -878,7 +878,8 @@
   "Evalua una expresion escalar. Devuelve una lista con el resultado y un ambiente."
   [key ambiente]
   (cond 
-    (or (number? key) (string? key)) (list key ambiente)
+    ;; (or (number? key) (string? key)) (list key ambiente)
+    (not (symbol? key)) (list key ambiente)
     :else (list (buscar key ambiente) ambiente)
   )
 )
