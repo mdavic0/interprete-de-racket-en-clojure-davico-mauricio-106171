@@ -589,7 +589,13 @@
 (defn actualizar-amb
   "Devuelve un ambiente actualizado con una clave (nombre de la variable o funcion) y su valor. 
   Si el valor es un error, el ambiente no se modifica. De lo contrario, se le carga o reemplaza la nueva informacion."
-[]
+  [amb clave valor]
+  (cond
+    (error? valor) amb
+    (empty? amb) (list clave valor)
+    (= clave (first amb)) (concat (list clave valor) (drop 2 amb))
+    :else (concat (list (first amb) (second amb)) (actualizar-amb (drop 2 amb) clave valor))
+  )
 )
 
 ; user=> (buscar 'c '(a 1 b 2 c 3 d 4 e 5))
@@ -617,9 +623,10 @@
 (defn error?
   "Devuelve true o false, segun sea o no el arg. una lista con `;ERROR:` o `;WARNING:` como primer elemento."
 	[lista]
-		(or (= (first lista) (symbol ";ERROR:"))
-				(= (first lista) (symbol ";WARNING:"))
-		)
+    (cond
+      (list? lista) (or (= (first lista) (symbol ";ERROR:")) (= (first lista) (symbol ";WARNING:")))
+      :else false
+    )
 )
 
 ; user=> (proteger-bool-en-str "(or #f #t)")
