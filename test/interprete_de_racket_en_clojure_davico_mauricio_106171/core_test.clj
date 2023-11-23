@@ -314,3 +314,25 @@
     (is (= (evaluar-escalar 'n '(x 6 y 11 z "hola")) (list (cons (symbol ";ERROR:") (list 'unbound (symbol "variable:") 'n)) '(x 6 y 11 z "hola"))))
   )
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; OBS: LOS DEJO COMENTADOS YA QUE REQUIEREN INTERACCION DEL USUARIO PARA FUNCIONAR
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; user=> (leer-entrada)
+; (hola
+; mundo)
+; "(hola mundo)"
+; user=> (leer-entrada)
+; 123
+; "123"
+; user=> (leer-entrada)
+; (+ 1 3) 3)
+; ;WARNING: unexpected ")"#<input-port 0>
+; "(+ 1 3) 3)"
+;; (deftest test-leer-entrada
+;;   (testing "leer-entrada: Lee una entrada de la consola"
+;;     (is (= (leer-entrada) "(hola mundo)"))
+;;     (is (= (leer-entrada) "123"))
+;;     (is (= (leer-entrada) "(+ 1 3) 3)"))
+;;   )
+;; )

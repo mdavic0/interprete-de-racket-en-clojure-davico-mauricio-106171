@@ -533,11 +533,26 @@
 ; ;WARNING: unexpected ")"#<input-port 0>
 ; "(+ 1 3) 3)"
 (defn leer-entrada
-  "Lee una cadena desde la terminal/consola. Si contiene parentesis de menos al presionar Enter/Intro,
-  se considera que la cadena ingresada es una subcadena y el ingreso continua. De lo contrario, se la
-  devuelve completa (si corresponde, advirtiendo previamente que hay parentesis de mas)."
-[]
+  "Lee una cadena desde la terminal/consola. Si contiene paréntesis de menos al presionar Enter/Intro,
+  se considera que la cadena ingresada es una subcadena y el ingreso continúa. De lo contrario, se la
+  devuelve completa (si corresponde, advirtiendo previamente que hay paréntesis de más)."
+  ([] (leer-entrada ""))
+  ([cadena]
+    (let [renglon (read-line)
+          cadena-completa (cond
+                            (and (= cadena "") (not (= renglon ""))) renglon
+                            (and (not (= cadena "")) (= renglon "")) cadena
+                            (and (= cadena "") (= renglon "")) ""
+                            :else (str cadena " " renglon))]
+      (cond
+        (= (verificar-parentesis cadena-completa) 1) (leer-entrada cadena-completa)
+        (= (verificar-parentesis cadena-completa) -1) (do (println ";WARNING: unexpected \")\"#<input-port 0>") cadena-completa)
+        :else cadena-completa
+      )
+    )
+  )
 )
+
 
 ; user=> (verificar-parentesis "(hola 'mundo")
 ; 1
