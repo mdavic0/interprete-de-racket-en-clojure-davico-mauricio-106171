@@ -360,3 +360,33 @@
     (is (= (actualizar-amb () 'b 7) '(b 7)))
   )
 )
+
+;; FUNCION PARA TESTEAR fnc-read de forma automática
+;; Utiliza el wrapper de leer-entrada para simular la entrada de datos
+(defn testing-fnc-read
+  "Devuelve la lectura de un elemento de Racket desde la terminal/consola."
+  [list] 
+  (cond
+    (empty? list) (read-string (testing-leer-entrada "(hola mundo)" "(hola\nmundo)\n"))
+    (= (count list) 1) (generar-mensaje-error :io-ports-not-implemented 'read)
+    :else (generar-mensaje-error :wrong-number-args-prim-proc 'read)
+  )
+)
+; user=> (fnc-read ())
+; (hola
+; mundo)
+; (hola mundo)
+; user=> (fnc-read '(1))
+; (;ERROR: read: Use of I/O ports not implemented)
+; user=> (fnc-read '(1 2))
+; (;ERROR: Wrong number of args given #<primitive-procedure read>)
+; user=> (fnc-read '(1 2 3))
+; (;ERROR: Wrong number of args given #<primitive-procedure read>)
+(deftest test-fnc-read
+  (testing "fnc-read: Lee una entrada de la consola"
+    (is (= (testing-fnc-read ()) '(hola mundo)))
+    (is (= (fnc-read '(1)) (cons (symbol ";ERROR:") (list (symbol "read:") 'Use 'of 'I/O 'ports 'not 'implemented))))
+    (is (= (fnc-read '(1 2)) (cons (symbol ";ERROR:") (list 'Wrong 'number 'of 'args 'given (symbol "#<primitive-procedure") 'read>))))
+    (is (= (fnc-read '(1 2 3)) (cons (symbol ";ERROR:") (list 'Wrong 'number 'of 'args 'given (symbol "#<primitive-procedure") 'read>))))
+  )
+)
