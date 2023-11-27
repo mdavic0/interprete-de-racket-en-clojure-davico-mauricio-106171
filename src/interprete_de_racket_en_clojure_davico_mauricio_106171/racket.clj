@@ -121,7 +121,16 @@
         (not (seq? expre)) (evaluar-escalar expre amb)
 
         (= (first expre) 'define) (evaluar-define expre amb)
-
+        (= (first expre) 'set!) (evaluar-set! expre amb)
+        (= (first expre) 'if) (evaluar-if expre amb)
+        (= (first expre) 'or) (evaluar-or expre amb)
+        (= (first expre) 'cond) (evaluar-cond expre amb)
+        (= (first expre) 'eval) (evaluar-eval expre amb)
+        (= (first expre) 'exit) (evaluar-exit expre amb)
+        (= (first expre) 'quote) (evaluar-quote expre amb)
+        (= (first expre) 'enter!) (evaluar-enter! expre amb)
+        (= (first expre) 'lambda) (evaluar-lambda expre amb)
+        
          ;
          ;
          ;
