@@ -118,7 +118,7 @@
   (if (and (seq? expre) (or (empty? expre) (error? expre))) ; si `expre` es () o error, devolverla intacta
       (list expre amb)                                      ; de lo contrario, evaluarla
       (cond
-        (not (seq? expre))             (evaluar-escalar expre amb)
+        (not (seq? expre)) (evaluar-escalar expre amb)
 
         (= (first expre) 'define) (evaluar-define expre amb)
 
@@ -960,7 +960,12 @@
 ; ((;ERROR: if: missing or extra expression (if 1)) (n 7))
 (defn evaluar-if
   "Evalua una expresion `if`. Devuelve una lista con el resultado y un ambiente eventualmente modificado."
-[]
+  [expr amb]
+  (cond
+    (or (= (count expr) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'if expr) amb)
+    (not-any? symbol? (rest expr)) (list (last expr) amb)
+    :else false
+  )
 )
 
 ; user=> (evaluar-or (list 'or) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))
@@ -980,17 +985,24 @@
 
 ; user=> (evaluar-set! '(set! x 1) '(x 0))
 ; (#<void> (x 1))
-; user=> (evaluar-set! '(set! x 1) '())
+; user=> (evaluar-set! '(set! x 1) '())                                 ->COND 1
 ; ((;ERROR: unbound variable: x) ())
-; user=> (evaluar-set! '(set! x) '(x 0))
+; user=> (evaluar-set! '(set! x) '(x 0))                                ->COND 2
 ; ((;ERROR: set!: missing or extra expression (set! x)) (x 0))
-; user=> (evaluar-set! '(set! x 1 2) '(x 0))
-; ((;ERROR: set!: missing or extra expression (set! x 1 2)) (x 0))
-; user=> (evaluar-set! '(set! 1 2) '(x 0))
+; user=> (evaluar-set! '(set! x 1 2) '(x 0))                            ->COND 2
+; ((;ERROR: set!: missing or extra expression (set! x 1 2)) (x 0))     
+; user=> (evaluar-set! '(set! 1 2) '(x 0))                              ->COND 3
 ; ((;ERROR: set!: bad variable 1) (x 0))
 (defn evaluar-set!
   "Evalua una expresion `set!`. Devuelve una lista con el resultado y un ambiente actualizado con la redefinicion."
-[]
+  [expr amb]
+  (cond
+    ;; casos de error:
+    (and (= (count expr) 3) (symbol? (second expr)) (empty? amb)) (list (buscar (second expr) amb) amb)
+    (or (= (count expr) 2) (> (count expr) 3)) (list (generar-mensaje-error :missing-or-extra 'set! expr) amb)
+    (not (symbol? (second expr))) (list (generar-mensaje-error :bad-variable 'set! (second expr)) amb)
+    :else (list (symbol "#<void>") (actualizar-amb amb (second expr) (last expr)))
+  )
 )
 
 ; Al terminar de cargar el archivo en el REPL de Clojure, se debe devolver true.
