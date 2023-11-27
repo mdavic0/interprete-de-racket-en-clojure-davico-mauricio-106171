@@ -546,7 +546,7 @@
                             :else (str cadena " " renglon))]
       (cond
         (= (verificar-parentesis cadena-completa) 1) (leer-entrada cadena-completa)
-        (= (verificar-parentesis cadena-completa) -1) (do (println ";WARNING: unexpected \")\"#<input-port 0>") cadena-completa)
+        (= (verificar-parentesis cadena-completa) -1) (do (println (generar-mensaje-error :warning-paren)) cadena-completa)
         :else cadena-completa
       )
     )
