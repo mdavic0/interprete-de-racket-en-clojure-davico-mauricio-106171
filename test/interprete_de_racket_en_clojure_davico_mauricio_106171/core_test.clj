@@ -315,9 +315,6 @@
   )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; OBS: LOS DEJO COMENTADOS YA QUE REQUIEREN INTERACCION DEL USUARIO PARA FUNCIONAR
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; user=> (leer-entrada)
 ; (hola
 ; mundo)
@@ -329,13 +326,23 @@
 ; (+ 1 3) 3)
 ; ;WARNING: unexpected ")"#<input-port 0>
 ; "(+ 1 3) 3)"
-;; (deftest test-leer-entrada
-;;   (testing "leer-entrada: Lee una entrada de la consola"
-;;     (is (= (leer-entrada) "(hola mundo)"))
-;;     (is (= (leer-entrada) "123"))
-;;     (is (= (leer-entrada) "(+ 1 3) 3)"))
-;;   )
-;; )
+
+;; Agegro tests automaticos para leer-entrada usando un wrapper que internamente
+;; llama a leer-entrada
+;; FUNCION PARA TESTEAR leer-entrada de forma automática
+(defn testing-leer-entrada [entrada-esperada entrada-simulada]
+  (with-in-str entrada-simulada
+    (let [resultado (leer-entrada)]
+      resultado)))
+
+(deftest test-leer-entrada
+  (testing "leer-entrada: Lee una entrada de la consola"
+    (is (= (testing-leer-entrada "(hola mundo)" "(hola\nmundo)\n") "(hola mundo)"))
+    (is (= (testing-leer-entrada "123" "123\n") "123"))
+    ;; Dejo comentado este caso ya que printea un WARNING en la consola
+    ;; (is (= (testing-leer-entrada "(+ 1 3) 3)" "(+ 1 3) 3)\n") "(+ 1 3) 3)"))
+  )
+)
 
 ; user=> (actualizar-amb '(a 1 b 2 c 3) 'd 4)
 ; (a 1 b 2 c 3 d 4)

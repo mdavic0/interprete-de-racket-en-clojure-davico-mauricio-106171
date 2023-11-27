@@ -553,7 +553,6 @@
   )
 )
 
-
 ; user=> (verificar-parentesis "(hola 'mundo")
 ; 1
 ; user=> (verificar-parentesis "(hola '(mundo)))")
