@@ -910,25 +910,36 @@
   )
 )
 
-; user=> (evaluar-define '(define x 2) '(x 1))
+; user=> (evaluar-define '(define x 2) '(x 1))                         -> COND 5
 ; (#<void> (x 2))
-; user=> (evaluar-define '(define (f x) (+ x 1)) '(x 1))
+; user=> (evaluar-define '(define (f x) (+ x 1)) '(x 1))               -> else
 ; (#<void> (x 1 f (lambda (x) (+ x 1))))
-; user=> (evaluar-define '(define) '(x 1))
+; user=> (evaluar-define '(define) '(x 1))                              -> COND 1
 ; ((;ERROR: define: missing or extra expression (define)) (x 1))
-; user=> (evaluar-define '(define x) '(x 1))
+; user=> (evaluar-define '(define x) '(x 1))                            -> COND 1
 ; ((;ERROR: define: missing or extra expression (define x)) (x 1))
-; user=> (evaluar-define '(define x 2 3) '(x 1))
+; user=> (evaluar-define '(define x 2 3) '(x 1))                        -> COND 3
 ; ((;ERROR: define: missing or extra expression (define x 2 3)) (x 1))
-; user=> (evaluar-define '(define ()) '(x 1))
+; user=> (evaluar-define '(define ()) '(x 1))                           -> COND 1  
 ; ((;ERROR: define: missing or extra expression (define ())) (x 1))
-; user=> (evaluar-define '(define () 2) '(x 1))
+; user=> (evaluar-define '(define () 2) '(x 1))                         -> COND 4
 ; ((;ERROR: define: bad variable (define () 2)) (x 1))
-; user=> (evaluar-define '(define 2 x) '(x 1))
+; user=> (evaluar-define '(define 2 x) '(x 1))                          -> COND 2
 ; ((;ERROR: define: bad variable (define 2 x)) (x 1))
 (defn evaluar-define
   "Evalua una expresion `define`. Devuelve una lista con el resultado y un ambiente actualizado con la definicion."
-[]
+  [expr amb]
+  (cond
+    ;; casos de error:
+    (or (= (count expr) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
+    (and (not (symbol? (second expr))) (not (list? (second expr)))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
+    (and (symbol? (second expr)) (> (count expr) 3)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
+    (and (= (count expr) 3) (list? (second expr)) (empty? (second expr))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
+    
+    ;; casos de exito:
+    (and (symbol? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (second expr) (last expr)))
+    :else (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (last expr))))
+  )
 )
 
 ; user=> (evaluar-if '(if 1 2) '(n 7))
@@ -964,7 +975,7 @@
 ; (#f (#f #f #t #t))
 (defn evaluar-or
   "Evalua una expresion `or`.  Devuelve una lista con el resultado y un ambiente."
-[]
+  []
 )
 
 ; user=> (evaluar-set! '(set! x 1) '(x 0))

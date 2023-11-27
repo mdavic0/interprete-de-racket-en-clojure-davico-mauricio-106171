@@ -390,3 +390,33 @@
     (is (= (fnc-read '(1 2 3)) (cons (symbol ";ERROR:") (list 'Wrong 'number 'of 'args 'given (symbol "#<primitive-procedure") 'read>))))
   )
 )
+
+
+; user=> (evaluar-define '(define x 2) '(x 1))                         -> COND 4
+; (#<void> (x 2))
+; user=> (evaluar-define '(define (f x) (+ x 1)) '(x 1))               -> else
+; (#<void> (x 1 f (lambda (x) (+ x 1))))
+; user=> (evaluar-define '(define) '(x 1))                              -> COND 1
+; ((;ERROR: define: missing or extra expression (define)) (x 1))
+; user=> (evaluar-define '(define x) '(x 1))                            -> COND 1
+; ((;ERROR: define: missing or extra expression (define x)) (x 1))
+; user=> (evaluar-define '(define x 2 3) '(x 1))                        -> COND 3
+; ((;ERROR: define: missing or extra expression (define x 2 3)) (x 1))
+; user=> (evaluar-define '(define ()) '(x 1))                           -> COND 1  
+; ((;ERROR: define: missing or extra expression (define ())) (x 1))
+; user=> (evaluar-define '(define () 2) '(x 1))                         -> COND 2
+; ((;ERROR: define: bad variable (define () 2)) (x 1))
+; user=> (evaluar-define '(define 2 x) '(x 1))                          -> COND 2
+; ((;ERROR: define: bad variable (define 2 x)) (x 1))
+(deftest test-evaluar-define 
+  (testing "evaluar-define: Evalua una expresion de tipo define"
+    (is (= (evaluar-define '(define x 2) '(x 1)) (list (symbol "#<void>") '(x 2))))
+    (is (= (evaluar-define '(define (f x) (+ x 1)) '(x 1)) (list (symbol "#<void>") '(x 1 f (lambda (x) (+ x 1))))))
+    (is (= (evaluar-define '(define) '(x 1)) (list (cons (symbol ";ERROR:") (list (symbol "define:") 'missing 'or 'extra 'expression '(define))) '(x 1))))
+    (is (= (evaluar-define '(define x) '(x 1)) (list (cons (symbol ";ERROR:") (list (symbol "define:") 'missing 'or 'extra 'expression '(define x))) '(x 1))))
+    (is (= (evaluar-define '(define x 2 3) '(x 1)) (list (cons (symbol ";ERROR:") (list (symbol "define:") 'missing 'or 'extra 'expression '(define x 2 3))) '(x 1))))
+    (is (= (evaluar-define '(define ()) '(x 1)) (list (cons (symbol ";ERROR:") (list (symbol "define:") 'missing 'or 'extra 'expression '(define ()))) '(x 1))))
+    (is (= (evaluar-define '(define () 2) '(x 1)) (list (cons (symbol ";ERROR:") (list (symbol "define:") 'bad 'variable '(define () 2))) '(x 1))))
+    (is (= (evaluar-define '(define 2 x) '(x 1)) (list (cons (symbol ";ERROR:") (list (symbol "define:") 'bad 'variable '(define 2 x))) '(x 1))))
+  )
+)
