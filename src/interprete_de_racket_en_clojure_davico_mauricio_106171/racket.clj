@@ -217,7 +217,7 @@
     (= fnc 'null?)        (fnc-null? lae)
     (= fnc 'read)         (fnc-read lae)
     (= fnc 'reverse)      (fnc-reverse lae)
-    
+
     :else (generar-mensaje-error :wrong-type-apply fnc)))
 
 
@@ -563,19 +563,13 @@
   "Lee una cadena desde la terminal/consola. Si contiene paréntesis de menos al presionar Enter/Intro,
   se considera que la cadena ingresada es una subcadena y el ingreso continúa. De lo contrario, se la
   devuelve completa (si corresponde, advirtiendo previamente que hay paréntesis de más)."
-  ([] (leer-entrada ""))
-  ([cadena]
-    (let [renglon (read-line)
-          cadena-completa (cond
-                            (and (= cadena "") (not (= renglon ""))) renglon
-                            (and (not (= cadena "")) (= renglon "")) cadena
-                            (and (= cadena "") (= renglon "")) ""
-                            :else (str cadena " " renglon))]
-      (cond
-        (= (verificar-parentesis cadena-completa) 1) (leer-entrada cadena-completa)
-        (= (verificar-parentesis cadena-completa) -1) (do (println (generar-mensaje-error :warning-paren)) cadena-completa)
-        :else cadena-completa
-      )
+  []
+  (let [input (read)]
+    (cond
+      (string? input) input
+      (number? input) (str input)
+      (and (list? input) (= (verificar-parentesis input) -1)) (do (println (generar-mensaje-error :warning-paren)) (str input))
+      :else (str input)
     )
   )
 )
