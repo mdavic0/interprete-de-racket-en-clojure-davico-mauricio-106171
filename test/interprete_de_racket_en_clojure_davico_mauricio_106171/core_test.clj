@@ -440,11 +440,11 @@
 (deftest test-evaluar-if
   (testing "evaluar-if: Evalua una expresion de tipo if"
     (is (= (evaluar-if '(if 1 2) '(n 7)) '(2 (n 7))))
-    ;; (is (= (evaluar-if '(if 1 n) '(n 7)) '(7 (n 7))))
-    ;; (is (= (evaluar-if '(if 1 n 8) '(n 7)) '(7 (n 7))))
-    ;; (is (= (evaluar-if (list 'if (symbol "#f") 'n) (list 'n 7 (symbol "#f") (symbol "#f"))) (list (symbol "#<void>") '(n 7 #f #f))))
-    ;; (is (= (evaluar-if (list 'if (symbol "#f") 'n 8) (list 'n 7 (symbol "#f") (symbol "#f"))) '(8 (n 7 #f #f))))
-    ;; (is (= (evaluar-if (list 'if (symbol "#f") 'n '(set! n 9)) (list 'n 7 (symbol "#f") (symbol "#f"))) (list (symbol "#<void>") '(n 9 #f #f))))
+    (is (= (evaluar-if '(if 1 n) '(n 7)) '(7 (n 7))))
+    (is (= (evaluar-if '(if 1 n 8) '(n 7)) '(7 (n 7))))
+    (is (= (evaluar-if (list 'if (symbol "#f") 'n) (list 'n 7 (symbol "#f") (symbol "#f"))) (list (symbol "#<void>") (list 'n '7 (symbol "#f") (symbol "#f")))))
+    (is (= (evaluar-if (list 'if (symbol "#f") 'n 8) (list 'n 7 (symbol "#f") (symbol "#f"))) (list 8 (list 'n 7 (symbol "#f") (symbol "#f")))))
+    (is (= (evaluar-if (list 'if (symbol "#f") 'n '(set! n 9)) (list 'n 7 (symbol "#f") (symbol "#f"))) (list (symbol "#<void>") (list 'n 9 (symbol "#f") (symbol "#f")))))
     (is (= (evaluar-if '(if) '(n 7)) (list (cons (symbol ";ERROR:") (list (symbol "if:") 'missing 'or 'extra 'expression '(if))) '(n 7))))
     (is (= (evaluar-if '(if 1) '(n 7)) (list (cons (symbol ";ERROR:") (list (symbol "if:") 'missing 'or 'extra 'expression '(if 1))) '(n 7))))
   )

@@ -973,9 +973,20 @@
   (cond
     (or (= (count expr) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'if expr) amb)
     (not-any? symbol? (rest expr)) (list (last expr) amb)
-    :else false
+    :else
+    (let [resultado (evaluar (second expr) amb)
+          primero (first resultado)
+          ambiente (second resultado)]
+      (if (= primero (symbol "#f"))
+        ;; si es falso -> tomo el cuarto elemento de la lista de expresiones (si tiene 3 entonces el 4to es #<void>)
+        (if (= (count expr) 3) (list (symbol "#<void>") ambiente) (evaluar (last expr) amb))
+        ;; caso contrario, tomo el tercer elemento de la lista de expresiones
+        (evaluar (second (rest expr)) amb)
+      )
+    )
   )
 )
+
 
 ; user=> (evaluar-or (list 'or) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))
 ; (#f (#f #f #t #t))
