@@ -450,6 +450,26 @@
   )
 )
 
+; user=> (evaluar-or (list 'or) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))
+; (#f (#f #f #t #t))
+; user=> (evaluar-or (list 'or (symbol "#t")) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))
+; (#t (#f #f #t #t))
+; user=> (evaluar-or (list 'or 7) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))
+; (7 (#f #f #t #t))
+; user=> (evaluar-or (list 'or (symbol "#f") 5) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))
+; (5 (#f #f #t #t))
+; user=> (evaluar-or (list 'or (symbol "#f")) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))
+; (#f (#f #f #t #t))
+(deftest test-evaluar-or
+  (testing "evaluar-or: Evalua una expresion de tipo or"
+    (is (= (evaluar-or (list 'or) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t"))) (list (symbol "#f") (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))))
+    (is (= (evaluar-or (list 'or (symbol "#t")) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t"))) (list (symbol "#t") (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))))
+    (is (= (evaluar-or (list 'or 7) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t"))) (list 7 (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))))
+    (is (= (evaluar-or (list 'or (symbol "#f") 5) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t"))) (list 5 (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))))
+    (is (= (evaluar-or (list 'or (symbol "#f")) (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t"))) (list (symbol "#f") (list (symbol "#f") (symbol "#f") (symbol "#t") (symbol "#t")))))
+  )	
+)
+
 
 ; user=> (evaluar-set! '(set! x 1) '(x 0))
 ; (#<void> (x 1))
