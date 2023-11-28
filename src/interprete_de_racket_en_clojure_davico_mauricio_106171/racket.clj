@@ -194,12 +194,30 @@
   [fnc lae amb]
   (cond
     (= fnc '<)            (fnc-menor lae)
-    
     ;
     ; COMPLETAR
     ;
 
-
+    (= fnc '>)            (fnc-mayor lae)
+    (= fnc '>=)           (fnc-mayor-o-igual lae)
+    (= fnc '+)            (fnc-sumar lae)
+    (= fnc '-)            (fnc-restar lae)
+    (= fnc 'append)       (fnc-append lae)
+    (= fnc 'car)          (fnc-car lae)
+    (= fnc 'cdr)          (fnc-cdr lae)
+    (= fnc 'cons)         (fnc-cons lae)
+    (= fnc 'display)      (fnc-display lae)
+    (= fnc 'env)          (fnc-env lae amb)
+    (= fnc 'equal?)       (fnc-equal? lae)
+    (= fnc 'length)       (fnc-length lae)
+    (= fnc 'list)         (fnc-list lae)
+    (= fnc 'list?)        (fnc-list? lae)
+    (= fnc 'newline)      (fnc-newline lae)
+    (= fnc 'not)          (fnc-not lae)
+    (= fnc 'null?)        (fnc-null? lae)
+    (= fnc 'read)         (fnc-read lae)
+    (= fnc 'reverse)      (fnc-reverse lae)
+    
     :else (generar-mensaje-error :wrong-type-apply fnc)))
 
 
