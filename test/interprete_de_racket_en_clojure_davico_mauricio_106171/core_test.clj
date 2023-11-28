@@ -341,6 +341,7 @@
     (is (= (testing-leer-entrada "123" "123\n") "123"))
     ;; Dejo comentado este caso ya que printea un WARNING en la consola
     ;; (is (= (testing-leer-entrada "(+ 1 3) 3)" "(+ 1 3) 3)\n") "(+ 1 3) 3)"))
+    ;; (is (= (leer-entrada) "(+ 1 3) 3)"))
   )
 )
 

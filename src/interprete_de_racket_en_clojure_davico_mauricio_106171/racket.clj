@@ -559,17 +559,39 @@
 ; (+ 1 3) 3)
 ; ;WARNING: unexpected ")"#<input-port 0>
 ; "(+ 1 3) 3)"
+
+;; OBS: ESTA VERSION QUE USA `READ` NO FUNCIONA BIEN CON CADENAS QUE CONTENGAN PARENTESIS DE MENOS!!! (read lee hasta el primer ')' )
+;; (defn leer-entrada
+;;   "Lee una cadena desde la terminal/consola. Si contiene paréntesis de menos al presionar Enter/Intro,
+;;   se considera que la cadena ingresada es una subcadena y el ingreso continúa. De lo contrario, se la
+;;   devuelve completa (si corresponde, advirtiendo previamente que hay paréntesis de más)."
+;;   []
+;;   (let [input (read)]
+;;     (cond
+;;       (string? input) input
+;;       (number? input) (str input)
+;;       (and (list? input) (= (verificar-parentesis input) -1)) (do (println (generar-mensaje-error :warning-paren)) (str input))
+;;       :else (str input)
+;;     )
+;;   )
+;; )
 (defn leer-entrada
   "Lee una cadena desde la terminal/consola. Si contiene paréntesis de menos al presionar Enter/Intro,
   se considera que la cadena ingresada es una subcadena y el ingreso continúa. De lo contrario, se la
   devuelve completa (si corresponde, advirtiendo previamente que hay paréntesis de más)."
-  []
-  (let [input (read)]
-    (cond
-      (string? input) input
-      (number? input) (str input)
-      (and (list? input) (= (verificar-parentesis input) -1)) (do (println (generar-mensaje-error :warning-paren)) (str input))
-      :else (str input)
+  ([] (leer-entrada ""))
+  ([cadena]
+    (let [renglon (read-line)
+          cadena-completa (cond
+                            (and (= cadena "") (not (= renglon ""))) renglon
+                            (and (not (= cadena "")) (= renglon "")) cadena
+                            (and (= cadena "") (= renglon "")) ""
+                            :else (str cadena " " renglon))]
+      (cond
+        (= (verificar-parentesis cadena-completa) 1) (leer-entrada cadena-completa)
+        (= (verificar-parentesis cadena-completa) -1) (do (println (reduce str (generar-mensaje-error :warning-paren))) (flush) cadena-completa)
+        :else cadena-completa
+      )
     )
   )
 )
@@ -749,7 +771,7 @@
   "Devuelve la lectura de un elemento de Racket desde la terminal/consola."
   [list] 
   (cond
-    (empty? list) (read-string (leer-entrada))
+    (empty? list) (read)
     (= (count list) 1) (generar-mensaje-error :io-ports-not-implemented 'read)
     :else (generar-mensaje-error :wrong-number-args-prim-proc 'read)
   )
