@@ -4,31 +4,59 @@
 
 * Davico Mauricio, Padrón: 106171.
 
-## Installation
-
-Download from http://example.com/FIXME.
-
 ## Usage
 
-FIXME: explanation
+.\lein run
 
-    $ java -jar interprete-de-racket-en-clojure-davico-mauricio-106171-0.1.0-standalone.jar [args]
+Cargar demo.rkt
+`(enter! "demo.rkt")`
 
-## Options
+Esto carga el ambiente de demo y ademas hace display de lo que va evaluando, deteniendose en: 
 
-FIXME: listing of options this app accepts.
+![demo](/resources/demo.png)
 
-## Examples
+Al ingresar un valor para r:
 
-...
+![Alt text](/resources/valor-r.png)
 
-### Bugs
+Para volver: `(enter! #f)`
 
-...
+Para salir: `(exit)`
 
-### Any Other Sections
-### That You Think
-### Might be Useful
+Cargar jarras.rkt
+
+`(enter! "jarras.rkt")`
+
+![Prompt](/resources/prompt-esperado.png)
+
+Para volver: `(enter! #f)`
+
+Para probar que se cargo bien, llamar funciones definidas en jarras.rkt :
+
+![Bien cargado](/resources/propar-que-se-cargo-bien.png)
+
+
+Para probar jarras.rkt:
+
+`(breadth-first bc)`
+
+En nuestro racket:
+![Result](/resources/resultado-esperado-propio.png)
+
+En racket original
+![Resultado esperado](/resources/resultado-esperado.png)
+
+Para salir: 
+`(exit)`
+![Salir](/resources/salir.png)
+
+
+Ejemplo define: 
+![Alt text](/resources/ej-define.png)
+## Tests
+
+.\lein test
+
 
 ## License
 
