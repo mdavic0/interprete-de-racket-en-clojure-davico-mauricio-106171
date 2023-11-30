@@ -90,13 +90,13 @@
   ([amb ns]
    (if (empty? ns) (print ns) (pr ns)) (print "> ") (flush)
    (try
-     (let [renglon (leer-entrada)]                       ; READ
+     (let [renglon (spy "SALIDA DE LEER ENTRADA:" (leer-entrada))]                       ; READ
           (if (= renglon "")
               (repl amb ns)
-              (let [str-corregida (proteger-bool-en-str renglon),
-                    cod-en-str (read-string str-corregida),
-                    cod-corregido (restaurar-bool cod-en-str),
-                    res (evaluar cod-corregido amb),     ; EVAL
+              (let [str-corregida (spy "SALIDA DE PROTEGER BOOL"(proteger-bool-en-str renglon)),
+                    cod-en-str (spy "SALIDA DE cod en str: " (read-string str-corregida)),
+                    cod-corregido (spy "SALIDA DE cod corregid " (restaurar-bool cod-en-str)),
+                    res (spy "SALIDA DE EVALUAR " (evaluar cod-corregido amb)),     ; EVAL
                     res1 (first res),
                     res2 (second res)]                   
                     (cond 
@@ -680,7 +680,7 @@
 (defn proteger-bool-en-str
   "Cambia, en una cadena, #t por %t y #f por %f, para poder aplicarle read-string."
   [cadena]
-  (if cadena
+  (if (> (count cadena) 0)
     ; -> (threading macro) permite tomar el resultado de una expresión
     ; y pasarlo como primer argumento a la siguiente expresión
     (-> cadena
@@ -697,21 +697,18 @@
 ; (and (or #F #f #t #T) #T)
 ; user=> (restaurar-bool (read-string "(and (or %F %f %t %T) %T)") )
 ; (and (or #F #f #t #T) #T)
-(defn restaurar-bool
-  "Cambia, en un codigo leido con read-string, %t por #t y %f por #f."
-  [cadena]
-  (if cadena
-    ; -> (threading macro) permite tomar el resultado de una expresión
-    ; y pasarlo como primer argumento a la siguiente expresión
-    (-> cadena
-        (clojure.string/replace "%t" "#t")
-        (clojure.string/replace "%T" "#T")
-        (clojure.string/replace "%f" "#f")
-        (clojure.string/replace "%F" "#F")
-    )
-    ""
+(defn replace-item [item]
+  (let [replacements {(symbol "%t") (symbol "#t"),
+                      (symbol "%T") (symbol "#T"),
+                      (symbol "%f") (symbol "#f"),
+                      (symbol "%F") (symbol "#F")}]
+    (if (contains? replacements item)
+      (replacements item)
+      item))  
   )
-)
+
+(defn restaurar-bool [lst]
+  (map (fn [item] (if (list? item) (restaurar-bool item) (replace-item item))) lst))
 
 ; user=> (fnc-append '( (1 2) (3) (4 5) (6 7)))
 ; (1 2 3 4 5 6 7)

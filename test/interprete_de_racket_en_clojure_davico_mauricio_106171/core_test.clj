@@ -22,8 +22,8 @@
 ; (and (or #F #f #t #T) #T)
 (deftest test-restaurar-bool
   (testing "Restaurar bool cambia, en un codigo leido con read-string, %t por #t y %f por #f."
-    (is (= (restaurar-bool (read-string (proteger-bool-en-str "(and (or #F #f #t #T) #T)"))) "(and (or #F #f #t #T) #T)"))
-    (is (= (restaurar-bool (read-string "(and (or %F %f %t %T) %T)") ) "(and (or #F #f #t #T) #T)"))
+    (is (= (restaurar-bool (read-string (proteger-bool-en-str "(and (or #F #f #t #T) #T)"))) (list (symbol "and") (list (symbol "or") (symbol "#F") (symbol "#f") (symbol "#t") (symbol "#T")) (symbol "#T"))))
+    (is (= (restaurar-bool (read-string "(and (or %F %f %t %T) %T)")) (list (symbol "and") (list (symbol "or") (symbol "#F") (symbol "#f") (symbol "#t") (symbol "#T")) (symbol "#T"))))
   )
 )
 
