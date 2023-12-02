@@ -495,7 +495,6 @@
 
 
 ;; ################## MI SALIDA
-
 ;; *****************************************************
 ;; *                    Racket 2023                    *
 ;; * Demo de definicion y uso de variables y funciones *
@@ -613,10 +612,8 @@
 ;;       ((not (list? (car l))) (or (equal? a (car l)) (existe? a (cdr l))))
 ;;       (else (or (existe? a (car l)) (existe? a (cdr l))))))
 ;; > (existe? 'c '(a ((b) ((d c) a) e f)))
-;; FILTERED EXPR: : #f
 ;; #f
 ;; > (existe? 'g '(a ((b) ((d c) a) e f)))
-;; FILTERED EXPR: : #f
 ;; #f
 
 ;; Eliminacion de un elemento de una lista:
@@ -632,11 +629,13 @@
 ;; (a ((b) ((c) a) c f))
 
 ;; Profundidad de una lista:
-;; > (define (profundidad lista)
-;;     (if (or (not (list? lista)) (null? lista)) 0
-;;         (if (> (+ 1 (profundidad (car lista))) (profundidad (cdr lista)))
-;;             (+ 1 (profundidad (car lista)))
-;;             (profundidad (cdr lista)))))
+> (define (profundidad lista)
+    (if (or (not (list? lista)) (null? lista)) 0
+        (if (> (+ 1 (profundidad (car lista))) (profundidad (cdr lista)))
+            (+ 1 (profundidad (car lista)))
+            (profundidad (cdr lista)))
+    )
+)
 ;; > (profundidad '((2 3)(3 ((7))) 5))
 ;; (if (> (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5))))) (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5)))))
 ;; [el valor esperado es 4]
@@ -662,13 +661,13 @@
 ;; > (filtrar (lambda (x) (> x 0)) '(5 0 2 -1 4 6 0 8))
 ;; (5 2 4 6 8)
 
-;; REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
-;; > (define (reducir f l)
-;;     (if (null? (cdr l))
-;;         (car l)
-;;         (f (car l) (reducir f (cdr l)))))
-;; > (reducir (lambda (x y) (if (> x 0) (cons x y) y)) '(5 0 2 -1 4 6 0 8 ()))
-;; ((lambda (x y) (if (> x 0) (cons x y) y)) (car (quote (5 0 2 -1 4 6 0 8 ()))) (reducir (lambda (x y) (if (> x 0) (cons x y) y)) (cdr (quote (5 0 2 -1 4 6 0 8 ())))))
+REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
+> (define (reducir f l)
+    (if (null? (cdr l))
+        (car l)
+        (f (car l) (reducir f (cdr l)))))
+> (reducir (lambda (x y) (if (> x 0) (cons x y) y)) '(5 0 2 -1 4 6 0 8 ()))
+((lambda (x y) (if (> x 0) (cons x y) y)) (car (quote (5 0 2 -1 4 6 0 8 ()))) (reducir (lambda (x y) (if (> x 0) (cons x y) y)) (cdr (quote (5 0 2 -1 4 6 0 8 ())))))
 
 ;; MAPEAR [aplica a cada elemento de una lista una funcion dada]:
 ;; > (define (mapear op l)
@@ -741,6 +740,9 @@
 
 ;; Para ver el ambiente [no funciona en Racket v8.10]: (env)
 ;; Para salir del interprete: (exit)
+
+
+
 
 
 ;; ;; ################## SALIDA ESPERADA
