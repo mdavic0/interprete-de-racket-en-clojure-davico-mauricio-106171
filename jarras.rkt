@@ -55,4 +55,3 @@
     (display "Exito !!!") (newline)
     (display "Prof ....... ") (display (- (length (car grafobusq)) 1)) (newline)
     (display "Solucion ... ") (display (reverse (car grafobusq))) (newline) #t)
-

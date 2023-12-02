@@ -130,7 +130,7 @@
         (= (first expre) 'quote) (evaluar-quote expre amb)
         (= (first expre) 'enter!) (evaluar-enter! expre amb)
         (= (first expre) 'lambda) (evaluar-lambda expre amb)
-        
+
          ;
          ;
          ;
@@ -776,7 +776,7 @@
   "Devuelve la lectura de un elemento de Racket desde la terminal/consola."
   [list] 
   (cond
-    (empty? list) (read)
+    (empty? list) (spy "READED: "(restaurar-bool (read-string (proteger-bool-en-str (leer-entrada)))))
     (= (count list) 1) (generar-mensaje-error :io-ports-not-implemented 'read)
     :else (generar-mensaje-error :wrong-number-args-prim-proc 'read)
   )
@@ -974,6 +974,13 @@
 ; ((;ERROR: define: bad variable (define () 2)) (x 1))
 ; user=> (evaluar-define '(define 2 x) '(x 1))                          -> COND 2
 ; ((;ERROR: define: bad variable (define 2 x)) (x 1))
+
+;;  TODO: IMPLEMENTAR ACA!!!!!!! {
+;; CASO DE USO: 
+; user=> (evaluar-define '(define (cargar-r)
+;                             (display "->r: ")(set! r (read))(display "r*2: ")(display (+ r r))(newline)
+;                         ) '(x 1))
+; (#<void> (x 1 cargar-r (lambda () (display "->r: ") (set! r (read)) (display "r*2: ") (display (+ r r)) (newline))))
 (defn evaluar-define
   "Evalua una expresion `define`. Devuelve una lista con el resultado y un ambiente actualizado con la definicion."
   [expr amb]
@@ -986,7 +993,8 @@
     
     ;; casos de exito:
     (and (symbol? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (second expr) (last expr)))
-    :else (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (last expr))))
+    (and (list? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (last expr))))
+    :else (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (drop 2 expr))))
   )
 )
 
@@ -1063,7 +1071,7 @@
     (and (= (count expr) 3) (symbol? (second expr)) (empty? amb)) (list (buscar (second expr) amb) amb)
     (or (= (count expr) 2) (> (count expr) 3)) (list (generar-mensaje-error :missing-or-extra 'set! expr) amb)
     (not (symbol? (second expr))) (list (generar-mensaje-error :bad-variable 'set! (second expr)) amb)
-    :else (list (symbol "#<void>") (actualizar-amb amb (second expr) (last expr)))
+    :else (list (symbol "#<void>") (actualizar-amb amb (second expr) (first (evaluar (last expr) amb))))
   )
 )
 
