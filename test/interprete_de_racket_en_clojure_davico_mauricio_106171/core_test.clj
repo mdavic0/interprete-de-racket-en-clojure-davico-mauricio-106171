@@ -496,8 +496,6 @@
 
 ;; ################## MI SALIDA
 
-;; > (enter! "demo.rkt")
-
 ;; *****************************************************
 ;; *                    Racket 2023                    *
 ;; * Demo de definicion y uso de variables y funciones *
@@ -605,19 +603,21 @@
 ;; > d
 ;; 6
 
-Definicion de funciones recursivas [recorrido "a todo nivel"]
--------------------------------------------------------------
+;; Definicion de funciones recursivas [recorrido "a todo nivel"]
+;; -------------------------------------------------------------
 
-Existencia de un elemento escalar en una lista:
-> (define (existe? a l)
-    (cond
-      ((null? l) %f)
-      ((not (list? (car l))) (or (equal? a (car l)) (existe? a (cdr l))))
-      (else (or (existe? a (car l)) (existe? a (cdr l))))))
-> (existe? 'c '(a ((b) ((d c) a) e f)))
-(equal? (quote c) (car (quote (a ((b) ((d c) a) e f)))))
-> (existe? 'g '(a ((b) ((d c) a) e f)))
-(equal? (quote g) (car (quote (a ((b) ((d c) a) e f)))))
+;; Existencia de un elemento escalar en una lista:
+;; > (define (existe? a l)
+;;     (cond
+;;       ((null? l) %f)
+;;       ((not (list? (car l))) (or (equal? a (car l)) (existe? a (cdr l))))
+;;       (else (or (existe? a (car l)) (existe? a (cdr l))))))
+;; > (existe? 'c '(a ((b) ((d c) a) e f)))
+;; FILTERED EXPR: : #f
+;; #f
+;; > (existe? 'g '(a ((b) ((d c) a) e f)))
+;; FILTERED EXPR: : #f
+;; #f
 
 ;; Eliminacion de un elemento de una lista:
 ;; > (define (eliminar dat li)
@@ -631,15 +631,15 @@ Existencia de un elemento escalar en una lista:
 ;; > (eliminar '(1 2 3) '(a ((b) (((1 2 3) c) a) c f)))
 ;; (a ((b) ((c) a) c f))
 
-Profundidad de una lista:
-> (define (profundidad lista)
-    (if (or (not (list? lista)) (null? lista)) 0
-        (if (> (+ 1 (profundidad (car lista))) (profundidad (cdr lista)))
-            (+ 1 (profundidad (car lista)))
-            (profundidad (cdr lista)))))
-> (profundidad '((2 3)(3 ((7))) 5))
-(if (> (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5))))) (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5)))))
-[el valor esperado es 4]
+;; Profundidad de una lista:
+;; > (define (profundidad lista)
+;;     (if (or (not (list? lista)) (null? lista)) 0
+;;         (if (> (+ 1 (profundidad (car lista))) (profundidad (cdr lista)))
+;;             (+ 1 (profundidad (car lista)))
+;;             (profundidad (cdr lista)))))
+;; > (profundidad '((2 3)(3 ((7))) 5))
+;; (if (> (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5))))) (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5)))))
+;; [el valor esperado es 4]
 
 ;; "Planchado" de una lista:
 ;; > (define (planchar li)
@@ -650,8 +650,8 @@ Profundidad de una lista:
 ;; > (planchar '((2 3)(3 ((7))) 5))
 ;; (2 3 3 7 5)
 
-Definicion de funciones para "ocultar" la recursividad en la programacion funcional
------------------------------------------------------------------------------------
+;; Definicion de funciones para "ocultar" la recursividad en la programacion funcional
+;; -----------------------------------------------------------------------------------
 
 ;; FILTRAR [selecciona de una lista los elementos que cumplan con una condicion dada]:
 ;; > (define (filtrar f l)
@@ -662,85 +662,85 @@ Definicion de funciones para "ocultar" la recursividad en la programacion funcio
 ;; > (filtrar (lambda (x) (> x 0)) '(5 0 2 -1 4 6 0 8))
 ;; (5 2 4 6 8)
 
-REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
-> (define (reducir f l)
-    (if (null? (cdr l))
-        (car l)
-        (f (car l) (reducir f (cdr l)))))
-> (reducir (lambda (x y) (if (> x 0) (cons x y) y)) '(5 0 2 -1 4 6 0 8 ()))
-((lambda (x y) (if (> x 0) (cons x y) y)) (car (quote (5 0 2 -1 4 6 0 8 ()))) (reducir (lambda (x y) (if (> x 0) (cons x y) y)) (cdr (quote (5 0 2 -1 4 6 0 8 ())))))
+;; REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
+;; > (define (reducir f l)
+;;     (if (null? (cdr l))
+;;         (car l)
+;;         (f (car l) (reducir f (cdr l)))))
+;; > (reducir (lambda (x y) (if (> x 0) (cons x y) y)) '(5 0 2 -1 4 6 0 8 ()))
+;; ((lambda (x y) (if (> x 0) (cons x y) y)) (car (quote (5 0 2 -1 4 6 0 8 ()))) (reducir (lambda (x y) (if (> x 0) (cons x y) y)) (cdr (quote (5 0 2 -1 4 6 0 8 ())))))
 
-MAPEAR [aplica a cada elemento de una lista una funcion dada]:
-> (define (mapear op l)
-    (if (null? l)
-        '()
-        (cons (op (car l)) (mapear op (cdr l)))))
-> (mapear (lambda (x) (if (equal? x 0) 'z x)) '(5 0 2 -1 4 6 0 8))
-(cons ((lambda (x) (if (equal? x 0) (quote z) x)) (car (quote (5 0 2 -1 4 6 0 8)))) (mapear (lambda (x) (if (equal? x 0) (quote z) x)) (cdr (quote (5 0 2 -1 4 6 0 8)))))
+;; MAPEAR [aplica a cada elemento de una lista una funcion dada]:
+;; > (define (mapear op l)
+;;     (if (null? l)
+;;         '()
+;;         (cons (op (car l)) (mapear op (cdr l)))))
+;; > (mapear (lambda (x) (if (equal? x 0) 'z x)) '(5 0 2 -1 4 6 0 8))
+;; (cons ((lambda (x) (if (equal? x 0) (quote z) x)) (car (quote (5 0 2 -1 4 6 0 8)))) (mapear (lambda (x) (if (equal? x 0) (quote z) x)) (cdr (quote (5 0 2 -1 4 6 0 8)))))
 
-TRANSPONER [transpone una lista de listas]:
-> (define (transponer m)
-    (if (null? (car m))
-        '()
-        (cons (mapear car m) (transponer (mapear cdr m)))))
-> (transponer '((a b c) (d e f) (g h i)))
-(cons (mapear car (quote ((a b c) (d e f) (g h i)))) (transponer (mapear cdr (quote ((a b c) (d e f) (g h i))))))
+;; TRANSPONER [transpone una lista de listas]:
+;; > (define (transponer m)
+;;     (if (null? (car m))
+;;         '()
+;;         (cons (mapear car m) (transponer (mapear cdr m)))))
+;; > (transponer '((a b c) (d e f) (g h i)))
+;; (cons (mapear car (quote ((a b c) (d e f) (g h i)))) (transponer (mapear cdr (quote ((a b c) (d e f) (g h i))))))
 
-IOTA [retorna una lista con los primeros n numeros naturales]:
-> (define (iota n)
-    (if (< n 1)
-         '()
-         (auxiota 1 n)))
-> (define (auxiota i n)
-    (if (equal? i n)
-        (list n)
-        (cons i (auxiota (+ i 1) n))))
-> (iota 10)
-(auxiota 1 10)
+;; IOTA [retorna una lista con los primeros n numeros naturales]:
+;; > (define (iota n)
+;;     (if (< n 1)
+;;          '()
+;;          (auxiota 1 n)))
+;; > (define (auxiota i n)
+;;     (if (equal? i n)
+;;         (list n)
+;;         (cons i (auxiota (+ i 1) n))))
+;; > (iota 10)
+;; (auxiota 1 10)
 
-Funciones implementadas usando las funciones anteriores
--------------------------------------------------------
+;; Funciones implementadas usando las funciones anteriores
+;; -------------------------------------------------------
 
-Sumatoria de los primeros n numeros naturales:
-> (define (sumatoria n) (reducir + (iota n)))
-> (sumatoria 100)
-((quote +) (car (quote (auxiota 1 100))) (reducir (quote +) (cdr (quote (auxiota 1 100)))))
-[El valor esperado es 5050]
+;; Sumatoria de los primeros n numeros naturales:
+;; > (define (sumatoria n) (reducir + (iota n)))
+;; > (sumatoria 100)
+;; ((quote +) (car (quote (auxiota 1 100))) (reducir (quote +) (cdr (quote (auxiota 1 100)))))
+;; [El valor esperado es 5050]
 
-Eliminacion de los elementos repetidos en una lista simple:
-> (define (eliminar-repetidos li)
-    (reverse (reducir (lambda (x y) (if (existe? x y) y (cons x y))) (reverse (cons '() li)))))
-> (eliminar-repetidos '(a b c d e f g d c h b i j))
-((reducir (lambda (x y) (if (existe? x y) y (cons x y))) (cdr (quote (j i b h c d g f e d c b a ())))) (car (quote (j i b h c d g f e d c b a ()))) (lambda (x y) (if (existe? x y) y (cons x y))))
+;; Eliminacion de los elementos repetidos en una lista simple:
+;; > (define (eliminar-repetidos li)
+;;     (reverse (reducir (lambda (x y) (if (existe? x y) y (cons x y))) (reverse (cons '() li)))))
+;; > (eliminar-repetidos '(a b c d e f g d c h b i j))
+;; ((reducir (lambda (x y) (if (existe? x y) y (cons x y))) (cdr (quote (j i b h c d g f e d c b a ())))) (car (quote (j i b h c d g f e d c b a ()))) (lambda (x y) (if (existe? x y) y (cons x y))))
 
-Seleccion del enesimo elemento de una lista dada:
-> (define (seleccionar n li)
-    (if (or (< n 1) (> n (length li)))
-        '()
-        (car (car (filtrar (lambda (x) (equal? n (car (cdr x)))) (transponer (list li (iota (length li)))))))))
-> (seleccionar 5 '(a b c d e f g h i j))
-(car (car (filtrar (lambda (x) (equal? 5 (car (cdr x)))) (transponer (list (quote (a b c d e f g h i j)) (iota (length (quote (a b c d e f g h i j)))))))))
+;; Seleccion del enesimo elemento de una lista dada:
+;; > (define (seleccionar n li)
+;;     (if (or (< n 1) (> n (length li)))
+;;         '()
+;;         (car (car (filtrar (lambda (x) (equal? n (car (cdr x)))) (transponer (list li (iota (length li)))))))))
+;; > (seleccionar 5 '(a b c d e f g h i j))
+;; (car (car (filtrar (lambda (x) (equal? 5 (car (cdr x)))) (transponer (list (quote (a b c d e f g h i j)) (iota (length (quote (a b c d e f g h i j)))))))))
 
-Aplicacion de todas las funciones de una lista a un elemento dado:
-> (define (aplicar-todas lf x)
-    (mapear (lambda (f) (f x)) lf))
-> (aplicar-todas (list length cdr car) '((3 2 1)(9 8)(7 6)(5 4)))
-(cons ((lambda (f) (f (quote ((3 2 1) (9 8) (7 6) (5 4))))) (car (quote (length cdr car)))) (mapear (lambda (f) (f (quote ((3 2 1) (9 8) (7 6) (5 4))))) (cdr (quote (length cdr car)))))
+;; Aplicacion de todas las funciones de una lista a un elemento dado:
+;; > (define (aplicar-todas lf x)
+;;     (mapear (lambda (f) (f x)) lf))
+;; > (aplicar-todas (list length cdr car) '((3 2 1)(9 8)(7 6)(5 4)))
+;; (cons ((lambda (f) (f (quote ((3 2 1) (9 8) (7 6) (5 4))))) (car (quote (length cdr car)))) (mapear (lambda (f) (f (quote ((3 2 1) (9 8) (7 6) (5 4))))) (cdr (quote (length cdr car)))))
 
-Entrada de datos y salida del interprete
-----------------------------------------
+;; Entrada de datos y salida del interprete
+;; ----------------------------------------
 
-Carga de datos desde la terminal/consola:
-> (define r 0)
-> (define (cargar-r)
-    (display "->r: ")(set! r (read))(display "r*2: ")(display (+ r r))(newline))
-> (cargar-r)
-->r: 7
-READED: : 7
-r*2: 14
+;; Carga de datos desde la terminal/consola:
+;; > (define r 0)
+;; > (define (cargar-r)
+;;     (display "->r: ")(set! r (read))(display "r*2: ")(display (+ r r))(newline))
+;; > (cargar-r)
+;; ->r: 7
+;; READED: : 7
+;; r*2: 14
 
-Para ver el ambiente [no funciona en Racket v8.10]: (env)
-Para salir del interprete: (exit)
+;; Para ver el ambiente [no funciona en Racket v8.10]: (env)
+;; Para salir del interprete: (exit)
 
 
 ;; ;; ################## SALIDA ESPERADA

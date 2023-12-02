@@ -1051,7 +1051,10 @@
   (let [filtered-expr (drop-while #(= (symbol "#f") %) (rest expr))]
     (cond
       (= (count filtered-expr) 0) (list (symbol "#f") amb)
-      :else (list (first filtered-expr) amb))))
+      :else (list (first (evaluar (first filtered-expr) amb)) amb)
+    )
+  )
+)
 
 ; user=> (evaluar-set! '(set! x 1) '(x 0))
 ; (#<void> (x 1))
