@@ -612,7 +612,7 @@
 ;;       ((not (list? (car l))) (or (equal? a (car l)) (existe? a (cdr l))))
 ;;       (else (or (existe? a (car l)) (existe? a (cdr l))))))
 ;; > (existe? 'c '(a ((b) ((d c) a) e f)))
-;; #f
+;; #t
 ;; > (existe? 'g '(a ((b) ((d c) a) e f)))
 ;; #f
 
@@ -629,15 +629,13 @@
 ;; (a ((b) ((c) a) c f))
 
 ;; Profundidad de una lista:
-> (define (profundidad lista)
-    (if (or (not (list? lista)) (null? lista)) 0
-        (if (> (+ 1 (profundidad (car lista))) (profundidad (cdr lista)))
-            (+ 1 (profundidad (car lista)))
-            (profundidad (cdr lista)))
-    )
-)
+;; > (define (profundidad lista)
+;;     (if (or (not (list? lista)) (null? lista)) 0
+;;         (if (> (+ 1 (profundidad (car lista))) (profundidad (cdr lista)))
+;;             (+ 1 (profundidad (car lista)))
+;;             (profundidad (cdr lista)))))
 ;; > (profundidad '((2 3)(3 ((7))) 5))
-;; (if (> (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5))))) (+ 1 (profundidad (car (quote ((2 3) (3 ((7))) 5))))) (profundidad (cdr (quote ((2 3) (3 ((7))) 5)))))
+;; 4
 ;; [el valor esperado es 4]
 
 ;; "Planchado" de una lista:
@@ -661,13 +659,13 @@
 ;; > (filtrar (lambda (x) (> x 0)) '(5 0 2 -1 4 6 0 8))
 ;; (5 2 4 6 8)
 
-REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
-> (define (reducir f l)
-    (if (null? (cdr l))
-        (car l)
-        (f (car l) (reducir f (cdr l)))))
-> (reducir (lambda (x y) (if (> x 0) (cons x y) y)) '(5 0 2 -1 4 6 0 8 ()))
-((lambda (x y) (if (> x 0) (cons x y) y)) (car (quote (5 0 2 -1 4 6 0 8 ()))) (reducir (lambda (x y) (if (> x 0) (cons x y) y)) (cdr (quote (5 0 2 -1 4 6 0 8 ())))))
+;; REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
+;; > (define (reducir f l)
+;;     (if (null? (cdr l))
+;;         (car l)
+;;         (f (car l) (reducir f (cdr l)))))
+;; > (reducir (lambda (x y) (if (> x 0) (cons x y) y)) '(5 0 2 -1 4 6 0 8 ()))
+;; (5 2 4 6 8)
 
 ;; MAPEAR [aplica a cada elemento de una lista una funcion dada]:
 ;; > (define (mapear op l)
@@ -675,7 +673,7 @@ REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
 ;;         '()
 ;;         (cons (op (car l)) (mapear op (cdr l)))))
 ;; > (mapear (lambda (x) (if (equal? x 0) 'z x)) '(5 0 2 -1 4 6 0 8))
-;; (cons ((lambda (x) (if (equal? x 0) (quote z) x)) (car (quote (5 0 2 -1 4 6 0 8)))) (mapear (lambda (x) (if (equal? x 0) (quote z) x)) (cdr (quote (5 0 2 -1 4 6 0 8)))))
+;; (5 z 2 -1 4 6 z 8)
 
 ;; TRANSPONER [transpone una lista de listas]:
 ;; > (define (transponer m)
@@ -683,7 +681,7 @@ REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
 ;;         '()
 ;;         (cons (mapear car m) (transponer (mapear cdr m)))))
 ;; > (transponer '((a b c) (d e f) (g h i)))
-;; (cons (mapear car (quote ((a b c) (d e f) (g h i)))) (transponer (mapear cdr (quote ((a b c) (d e f) (g h i))))))
+;; ((a d g) (b e h) (c f i))
 
 ;; IOTA [retorna una lista con los primeros n numeros naturales]:
 ;; > (define (iota n)
@@ -695,7 +693,7 @@ REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
 ;;         (list n)
 ;;         (cons i (auxiota (+ i 1) n))))
 ;; > (iota 10)
-;; (auxiota 1 10)
+;; (1 2 3 4 5 6 7 8 9 10)
 
 ;; Funciones implementadas usando las funciones anteriores
 ;; -------------------------------------------------------
@@ -703,14 +701,14 @@ REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
 ;; Sumatoria de los primeros n numeros naturales:
 ;; > (define (sumatoria n) (reducir + (iota n)))
 ;; > (sumatoria 100)
-;; ((quote +) (car (quote (auxiota 1 100))) (reducir (quote +) (cdr (quote (auxiota 1 100)))))
+;; 5050
 ;; [El valor esperado es 5050]
 
 ;; Eliminacion de los elementos repetidos en una lista simple:
 ;; > (define (eliminar-repetidos li)
 ;;     (reverse (reducir (lambda (x y) (if (existe? x y) y (cons x y))) (reverse (cons '() li)))))
 ;; > (eliminar-repetidos '(a b c d e f g d c h b i j))
-;; ((reducir (lambda (x y) (if (existe? x y) y (cons x y))) (cdr (quote (j i b h c d g f e d c b a ())))) (car (quote (j i b h c d g f e d c b a ()))) (lambda (x y) (if (existe? x y) y (cons x y))))
+;; (a b c d e f g h i j)
 
 ;; Seleccion del enesimo elemento de una lista dada:
 ;; > (define (seleccionar n li)
@@ -718,13 +716,13 @@ REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
 ;;         '()
 ;;         (car (car (filtrar (lambda (x) (equal? n (car (cdr x)))) (transponer (list li (iota (length li)))))))))
 ;; > (seleccionar 5 '(a b c d e f g h i j))
-;; (car (car (filtrar (lambda (x) (equal? 5 (car (cdr x)))) (transponer (list (quote (a b c d e f g h i j)) (iota (length (quote (a b c d e f g h i j)))))))))
+;; e
 
 ;; Aplicacion de todas las funciones de una lista a un elemento dado:
 ;; > (define (aplicar-todas lf x)
 ;;     (mapear (lambda (f) (f x)) lf))
 ;; > (aplicar-todas (list length cdr car) '((3 2 1)(9 8)(7 6)(5 4)))
-;; (cons ((lambda (f) (f (quote ((3 2 1) (9 8) (7 6) (5 4))))) (car (quote (length cdr car)))) (mapear (lambda (f) (f (quote ((3 2 1) (9 8) (7 6) (5 4))))) (cdr (quote (length cdr car)))))
+;; (4 ((9 8) (7 6) (5 4)) (3 2 1))
 
 ;; Entrada de datos y salida del interprete
 ;; ----------------------------------------
@@ -735,7 +733,6 @@ REDUCIR [reduce una lista aplicando de a pares una funcion dada]:
 ;;     (display "->r: ")(set! r (read))(display "r*2: ")(display (+ r r))(newline))
 ;; > (cargar-r)
 ;; ->r: 7
-;; READED: : 7
 ;; r*2: 14
 
 ;; Para ver el ambiente [no funciona en Racket v8.10]: (env)

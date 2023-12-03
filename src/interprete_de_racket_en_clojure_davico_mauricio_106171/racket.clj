@@ -776,7 +776,7 @@
   "Devuelve la lectura de un elemento de Racket desde la terminal/consola."
   [list] 
   (cond
-    (empty? list) (spy "READED: "(restaurar-bool (read-string (proteger-bool-en-str (leer-entrada)))))
+    (empty? list) (restaurar-bool (read-string (proteger-bool-en-str (leer-entrada))))
     (= (count list) 1) (generar-mensaje-error :io-ports-not-implemented 'read)
     :else (generar-mensaje-error :wrong-number-args-prim-proc 'read)
   )
@@ -974,13 +974,6 @@
 ; ((;ERROR: define: bad variable (define () 2)) (x 1))
 ; user=> (evaluar-define '(define 2 x) '(x 1))                          -> COND 2
 ; ((;ERROR: define: bad variable (define 2 x)) (x 1))
-
-;;  TODO: IMPLEMENTAR ACA!!!!!!! {
-;; CASO DE USO: 
-; user=> (evaluar-define '(define (cargar-r)
-;                             (display "->r: ")(set! r (read))(display "r*2: ")(display (+ r r))(newline)
-;                         ) '(x 1))
-; (#<void> (x 1 cargar-r (lambda () (display "->r: ") (set! r (read)) (display "r*2: ") (display (+ r r)) (newline))))
 (defn evaluar-define
   "Evalua una expresion `define`. Devuelve una lista con el resultado y un ambiente actualizado con la definicion."
   [expr amb]
@@ -1019,14 +1012,13 @@
   [expr amb]
   (cond
     (or (= (count expr) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'if expr) amb)
-    (not-any? symbol? (rest expr)) (list (last expr) amb)
     :else
     (let [resultado (evaluar (second expr) amb)
-          primero (spy "EVALUAdo: " (first resultado))
+          primero (first resultado)
           ambiente (second resultado)]
       (if (= primero (symbol "#f"))
         ;; si es falso -> tomo el cuarto elemento de la lista de expresiones (si tiene 3 entonces el 4to es #<void>)
-        (if (= (count expr) 3) (list (symbol "#<void>") ambiente) (evaluar (last expr) amb))
+        (if (= (count expr) 3) (list (symbol "#<void>") ambiente) (evaluar (last expr) ambiente))
         ;; caso contrario, tomo el tercer elemento de la lista de expresiones
         (evaluar (second (rest expr)) ambiente)
       )
@@ -1048,13 +1040,14 @@
 (defn evaluar-or
   "Evalua una expresion `or`.  Devuelve una lista con el resultado y un ambiente."
   [expr amb]
-  (let [filtered-expr (drop-while #(= (symbol "#f") %) (rest expr))]
-    (cond
-      (= (count filtered-expr) 0) (list (symbol "#f") amb)
-      :else (list (first (evaluar (first filtered-expr) amb)) amb)
-    )
-  )
-)
+  (let [exprs (rest expr)]
+    (loop [exprs exprs]
+      (if (empty? exprs)
+        (list (symbol "#f") amb)
+        (let [[result new-amb] (evaluar (first exprs) amb)]
+          (if (= result (symbol "#f"))
+            (recur (rest exprs))
+            (list result new-amb)))))))
 
 ; user=> (evaluar-set! '(set! x 1) '(x 0))
 ; (#<void> (x 1))
