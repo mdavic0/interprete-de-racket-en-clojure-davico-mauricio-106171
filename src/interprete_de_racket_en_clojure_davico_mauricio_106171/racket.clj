@@ -95,7 +95,7 @@
               (repl amb ns)
               (let [str-corregida (proteger-bool-en-str renglon),
                     cod-en-str (read-string str-corregida),
-                    cod-corregido (restaurar-bool cod-en-str),
+                    cod-corregido (spy "leido: " (restaurar-bool cod-en-str)),
                     res (evaluar cod-corregido amb),     ; EVAL
                     res1 (first res),
                     res2 (second res)]                   
@@ -120,6 +120,7 @@
       (cond
         (not (seq? expre)) (evaluar-escalar expre amb)
 
+        (= (first expre) 'quote) (evaluar-quote expre amb)
         (= (first expre) 'define) (evaluar-define expre amb)
         (= (first expre) 'set!) (evaluar-set! expre amb)
         (= (first expre) 'if) (evaluar-if expre amb)
@@ -127,7 +128,6 @@
         (= (first expre) 'cond) (evaluar-cond expre amb)
         (= (first expre) 'eval) (evaluar-eval expre amb)
         (= (first expre) 'exit) (evaluar-exit expre amb)
-        (= (first expre) 'quote) (evaluar-quote expre amb)
         (= (first expre) 'enter!) (evaluar-enter! expre amb)
         (= (first expre) 'lambda) (evaluar-lambda expre amb)
 
@@ -974,20 +974,60 @@
 ; ((;ERROR: define: bad variable (define () 2)) (x 1))
 ; user=> (evaluar-define '(define 2 x) '(x 1))                          -> COND 2
 ; ((;ERROR: define: bad variable (define 2 x)) (x 1))
+;; (defn evaluar-define
+;;   "Evalua una expresion `define`. Devuelve una lista con el resultado y un ambiente actualizado con la definicion."
+;;   [expr amb]
+;;   (cond
+;;     ;; casos de error:
+;;     (or (= (count (spy "EXPR: " expr)) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
+;;     (and (not (symbol? (second expr))) (not (list? (second expr)))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
+;;     (and (symbol? (second expr)) (> (count expr) 3)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
+;;     (and (= (count expr) 3) (list? (second expr)) (empty? (second expr))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
+    
+;;     ;; casos de exito:
+;;     (and (symbol? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (second expr) (last expr)))
+;;     ;; (and (list? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (last expr))))
+;;     :else (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list* 'lambda (rest (second expr)) (drop 2 expr))))
+;;   )
+;; )
+;; (defn evaluar-define
+;;   "Evalua una expresion `define`. Devuelve una lista con el resultado y un ambiente actualizado con la definicion."
+;;   [expr amb]
+;;   (let [last-expr (spy "last-expr: " (if (and (seq? (last expr)) (= 'quote (first (last expr))) (not (symbol? (second (last expr))))) (second (last expr)) (spy "EXPR: "expr)))]
+;;     (cond
+;;       ;; casos de error:
+;;       (or (= (count expr) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
+;;       (and (not (symbol? (second expr))) (not (list? (second expr)))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
+;;       (and (symbol? (second expr)) (> (count expr) 3)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
+;;       (and (= (count expr) 3) (list? (second expr)) (empty? (second expr))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
+      
+;;       ;; casos de exito:
+;;       (and (symbol? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (second expr) (last last-expr)))
+;;       (and (list? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (last last-expr))))
+;;       :else (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list* 'lambda (rest (second expr)) (drop 2 last-expr))))
+;;     )
+;;   )
+;; )
+
 (defn evaluar-define
   "Evalua una expresion `define`. Devuelve una lista con el resultado y un ambiente actualizado con la definicion."
   [expr amb]
   (cond
     ;; casos de error:
-    (or (= (count expr) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
+    (or (= (count (spy "EXPR: " expr)) 1) (= (count expr) 2)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
     (and (not (symbol? (second expr))) (not (list? (second expr)))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
     (and (symbol? (second expr)) (> (count expr) 3)) (list (generar-mensaje-error :missing-or-extra 'define expr) amb)
     (and (= (count expr) 3) (list? (second expr)) (empty? (second expr))) (list (generar-mensaje-error :bad-variable 'define expr) amb)
     
     ;; casos de exito:
-    (and (symbol? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (second expr) (last expr)))
-    (and (list? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (last expr))))
-    :else (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (drop 2 expr))))
+    (and (symbol? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (second expr) (if (and (seq? (last expr)) (= 'quote (first (last expr)))) (second (last expr)) (last expr))))
+    :else
+      (let [last-expr (spy "last-expr: " (if (and (seq? (last expr)) (= 'quote (first (last expr)))) (second (last expr)) (spy "EXPR: "expr)))]
+        (cond
+          (and (list? (second expr)) (= (count expr) 3)) (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list 'lambda (rest (second expr)) (last last-expr))))
+          :else (list (symbol "#<void>") (actualizar-amb amb (first (second expr)) (list* 'lambda (rest (second expr)) (drop 2 last-expr))))
+        )
+      )
   )
 )
 
